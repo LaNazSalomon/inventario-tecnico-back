@@ -1,4 +1,4 @@
-import { Role } from 'common/enums/role.enum';
+import { Role } from 'src/common/enums/role.enum';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { Puesto } from 'src/puesto/entities/puesto.entity';
 import {
@@ -8,6 +8,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+
+//TODO: Poner la eliminacion en cascada en todas las partes
+
 
 @Entity('Users')
 export class User {

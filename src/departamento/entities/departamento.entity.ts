@@ -17,7 +17,9 @@ export class Departamento {
   @Column('text')
   nombreDepartamento: string;
 
-  @ManyToOne(() => UnidadAcademica, (ua) => ua.departamentos)
+  @ManyToOne(() => UnidadAcademica, (ua) => ua.departamentos,{
+    nullable: false
+  })
   @JoinColumn({ name: 'idUnidadAcademica' })
   unidadAcademica: UnidadAcademica;
 

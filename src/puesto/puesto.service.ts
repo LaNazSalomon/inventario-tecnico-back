@@ -1,11 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePuestoDto } from './dto/create-puesto.dto';
 import { UpdatePuestoDto } from './dto/update-puesto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Puesto } from './entities/puesto.entity';
+import { Repository } from 'typeorm';
+import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
 export class PuestoService {
-  create(createPuestoDto: CreatePuestoDto) {
-    return 'This action adds a new puesto';
+
+  constructor(
+    @InjectRepository( Puesto )
+    private readonly puestoRepository: Repository< Puesto >,
+  ){}
+
+
+  async create(createPuestoDto: CreatePuestoDto) {
+    try {
+
+      const puestoDB = this.puestoRepository.create( createPuestoDto );
+
+      await this.puestoRepository.save( puestoDB );
+
+      return puestoDB;
+
+
+    }catch ( err ){
+      ManejadorErroresDB.erroresDB( err, 'Puesto' );
+    }
   }
 
   findAll() {
