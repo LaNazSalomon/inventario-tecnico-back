@@ -36,6 +36,6 @@ export class UsersController {
   //Login
     @Post( 'login' )
   login( @Body() loginDto: LoginDto ) {
-
+    return this.usersService.login( loginDto );
   }
 }

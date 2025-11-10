@@ -31,7 +31,6 @@ export class DepartamentoService {
         ...createDepartamentoDto,
         unidadAcademica: unidad
       });
-      console.log(createDepartamentoDto);
       await this.departamentoRepository.save(createDepartamentoDB);
 
       return createDepartamentoDB;

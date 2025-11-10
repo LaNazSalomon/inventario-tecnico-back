@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { Role } from 'src/common/enums/role.enum';
 
 export class CreateUserDto {
@@ -20,6 +20,9 @@ export class CreateUserDto {
   @IsString({ message: 'Se esperaba texto en el campo apellido materno.' })
   @IsNotEmpty()
   apellidoMaterno: string;
+
+  @IsEmail()
+  email: string;
 
   @IsUUID('4', { message: 'El idPuesto debe ser un UUID válido.' })
   @IsNotEmpty()
