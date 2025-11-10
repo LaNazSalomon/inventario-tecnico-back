@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { PuestoModule } from './puesto/puesto.module';
 import { DepartamentoModule } from './departamento/departamento.module';
 import { UnidadAcademicaModule } from './unidad-academica/unidad-academica.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailsModule } from './emails/emails.module';
 
 @Module({
   imports: [
@@ -19,10 +21,24 @@ import { UnidadAcademicaModule } from './unidad-academica/unidad-academica.modul
       autoLoadEntities: true,
       synchronize: true,
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_HOST,
+        port: +process.env.EMAIL_PORT!,
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+      defaults: {
+        from: process.env.EMAIL,
+      },
+    }),
     UsersModule,
     PuestoModule,
     DepartamentoModule,
     UnidadAcademicaModule,
+    EmailsModule,
   ],
   controllers: [],
   providers: [],

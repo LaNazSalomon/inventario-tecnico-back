@@ -1,11 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUnidadAcademicaDto } from './dto/create-unidad-academica.dto';
 import { UpdateUnidadAcademicaDto } from './dto/update-unidad-academica.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UnidadAcademica } from './entities/unidad-academica.entity';
+import { Repository } from 'typeorm';
+import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
 export class UnidadAcademicaService {
-  create(createUnidadAcademicaDto: CreateUnidadAcademicaDto) {
-    return 'This action adds a new unidadAcademica';
+  constructor(
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadRepository: Repository<UnidadAcademica>,
+  ) {}
+
+  async create(createUnidadAcademicaDto: CreateUnidadAcademicaDto) {
+    try {
+      const unidadAcademica = this.unidadRepository.create(
+        createUnidadAcademicaDto,
+      );
+
+      await this.unidadRepository.save(unidadAcademica);
+      return unidadAcademica;
+      
+    } catch (err) {
+
+      ManejadorErroresDB.erroresDB( err, 'Unidad Academica' );
+
+    }
+
   }
 
   findAll() {
