@@ -17,6 +17,9 @@ import { MensajePassword } from 'src/common/helpers/MensajePassword.email';
 import { CONSTANTES } from 'src/common/helpers/constantes.helper';
 import { CreateEmailDto } from 'src/emails/dto/create-email.dto';
 import { EmailsService } from 'src/emails/emails.service';
+import * as bcrypt from 'bcrypt';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +31,7 @@ export class UsersService {
     @InjectRepository(Departamento)
     private readonly departamentoRepository: Repository<Departamento>,
     private readonly emailsServices: EmailsService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -123,5 +127,22 @@ export class UsersService {
         'No se encontro ningun usuario con este numero',
       );
     }
+
+    if ( !bcrypt.compareSync( password, userInDB.password ) ) {
+      throw new UnauthorizedException('Credenciales incorrectas (contraseña)');
+    }
+
+    return {
+      ...userInDB,
+      token: this.getJwtToken( { id: userInDB.idEmpleado } )
+    }
+  }
+
+
+  //-------------------------Generacion del JWT-------------------------
+  private getJwtToken ( payolad: JwtPayload ) {
+
+    const token = this.jwtService.sign( payolad );
+    return token;
   }
 }

@@ -7,8 +7,6 @@ import { DepartamentoModule } from './departamento/departamento.module';
 import { UnidadAcademicaModule } from './unidad-academica/unidad-academica.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailsModule } from './emails/emails.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -35,13 +33,6 @@ import { JwtModule } from '@nestjs/jwt';
       defaults: {
         from: process.env.EMAIL,
       },
-    }),
-    PassportModule.register( { defaultStrategy: 'jwt' } ),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn:'1h'
-      }
     }),
     UsersModule,
     PuestoModule,
