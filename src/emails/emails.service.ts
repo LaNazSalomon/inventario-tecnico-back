@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 
+//TODO: Modificar el remitente, esto para que se vea mejor
+
 @Injectable()
 export class EmailsService {
   constructor(private readonly mailService: MailerService) {}
