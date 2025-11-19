@@ -8,6 +8,15 @@ import { UnidadAcademicaModule } from './unidad-academica/unidad-academica.modul
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailsModule } from './emails/emails.module';
 import { EquiposComputoModule } from './equipos-computo/equipos-computo.module';
+import { MarcaEquipoModule } from './marca-equipo/marca-equipo.module';
+import { ModeloEquipoModule } from './modelo-equipo/modelo-equipo.module';
+import { TipoEquipoModule } from './tipo-equipo/tipo-equipo.module';
+import { TipoProcesadorModule } from './tipo-procesador/tipo-procesador.module';
+import { ModeloProcesadorModule } from './modelo-procesador/modelo-procesador.module';
+import { TipoVelocidadModule } from './tipo-velocidad/tipo-velocidad.module';
+import { TipoAlmacenamientoExtraibleModule } from './tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
+import { TipoConexionRedModule } from './tipo-conexion-red/tipo-conexion-red.module';
+import { SistemaOperativoModule } from './sistema-operativo/sistema-operativo.module';
 
 @Module({
   imports: [
@@ -41,6 +50,15 @@ import { EquiposComputoModule } from './equipos-computo/equipos-computo.module';
     UnidadAcademicaModule,
     EmailsModule,
     EquiposComputoModule,
+    MarcaEquipoModule,
+    ModeloEquipoModule,
+    TipoEquipoModule,
+    TipoProcesadorModule,
+    ModeloProcesadorModule,
+    TipoVelocidadModule,
+    TipoAlmacenamientoExtraibleModule,
+    TipoConexionRedModule,
+    SistemaOperativoModule,
   ],
   controllers: [],
   providers: [],

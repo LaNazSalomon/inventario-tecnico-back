@@ -38,6 +38,7 @@ export class UsersService {
     private readonly dataSource: DataSource,
   ) {}
 
+  //* ------------------------------ Crear usuario ------------------------------
   async create(createUserDto: CreateUserDto) {
     //Generamos contrasena aleatoria.
     const longPassword: number = 12;
@@ -227,7 +228,7 @@ export class UsersService {
 
     const userInDB = await this.userRepository.findOne({
       where: { numeroEmpleado },
-      select: { idEmpleado: true, numeroEmpleado: true, password: true },
+      select: { idEmpleado: true, numeroEmpleado: true, password: true, rol: true },
     });
 
     if (!userInDB) {
@@ -241,7 +242,9 @@ export class UsersService {
     }
 
     return {
-      ...userInDB,
+      numeroEmpleado: userInDB.numeroEmpleado,
+      idEmpleado: userInDB.idEmpleado,
+      rol: userInDB.rol,
       token: this.getJwtToken({ id: userInDB.idEmpleado }),
     };
   }
