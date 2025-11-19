@@ -7,6 +7,7 @@ import { DepartamentoModule } from './departamento/departamento.module';
 import { UnidadAcademicaModule } from './unidad-academica/unidad-academica.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailsModule } from './emails/emails.module';
+import { EquiposComputoModule } from './equipos-computo/equipos-computo.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { EmailsModule } from './emails/emails.module';
     DepartamentoModule,
     UnidadAcademicaModule,
     EmailsModule,
+    EquiposComputoModule,
   ],
   controllers: [],
   providers: [],
