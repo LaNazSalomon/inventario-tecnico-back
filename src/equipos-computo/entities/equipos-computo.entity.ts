@@ -1,6 +1,3 @@
-import { Departamento } from 'src/departamento/entities/departamento.entity';
-import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
-import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,28 +5,45 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
+import { User } from 'src/users/entities/user.entity';
+import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
+import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
+import { TipoEquipo } from 'src/tipo-equipo/entities/tipo-equipo.entity';
+import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
+import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
+import { TipoVelocidad } from 'src/tipo-velocidad/entities/tipo-velocidad.entity';
+import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
+import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-red.entity';
+import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
+import { VersionSO } from 'src/version-so/entities/version-so.entity';
+import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
+import { EstadoFuncionamiento, EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
+import { ResolucionPantalla, TamanoPantalla, TipoPantalla } from 'src/pantalla/entities/pantalla.entity';
 
 @Entity('equipo-computo')
 export class EquiposComputo {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  inventarioCSYT: string;
+  @Column('int')
+  inventario: number;
 
   @Column('text')
   nombreEquipo: string;
 
-  @Column('text')
-  tipoEquipo: string;
+  @ManyToOne(() => TipoEquipo)
+  @JoinColumn({ name: 'tipo_equipo_id' })
+  tipoEquipo: TipoEquipo;
 
-  @Column('text')
-  marca: string;
+  @ManyToOne(() => MarcaEquipo)
+  @JoinColumn({ name: 'marca_id' })
+  marca: MarcaEquipo;
 
-  @Column('text')
-  modelo: string;
+  @ManyToOne(() => ModeloEquipo)
+  @JoinColumn({ name: 'modelo_id' })
+  modelo: ModeloEquipo;
 
   @Column('text')
   direccionIP: string;
@@ -46,20 +60,24 @@ export class EquiposComputo {
   @Column('text')
   nombreDominio: string;
 
-  @Column('text')
-  tipoConexionRed: string;
+  @ManyToOne(() => TipoConexionRed)
+  @JoinColumn({ name: 'tipo_conexion_red_id' })
+  tipoConexionRed: TipoConexionRed;
 
-  @Column('text')
-  tipoProcesador: string;
+  @ManyToOne(() => TipoProcesador)
+  @JoinColumn({ name: 'tipo_procesador_id' })
+  tipoProcesador: TipoProcesador;
 
-  @Column('text')
-  modeloProcesador: string;
+  @ManyToOne(() => ModeloProcesador)
+  @JoinColumn({ name: 'modelo_procesador_id' })
+  modeloProcesador: ModeloProcesador;
 
   @Column('float')
   velocidadProcesador: number;
 
-  @Column('text')
-  tipoVelocidad: string;
+  @ManyToOne(() => TipoVelocidad)
+  @JoinColumn({ name: 'tipo_velocidad_id' })
+  tipoVelocidad: TipoVelocidad;
 
   @Column('int')
   nucleos: number;
@@ -70,32 +88,40 @@ export class EquiposComputo {
   @Column('text')
   capacidadAlmacenamiento: string;
 
-  @Column('text')
-  sistemaOperativo: string;
+  @ManyToOne(() => SistemaOperativo)
+  @JoinColumn({ name: 'sistema_operativo_id' })
+  sistemaOperativo: SistemaOperativo;
 
-  @Column('text')
-  versionSO: string;
+  @ManyToOne(() => VersionSO)
+  @JoinColumn({ name: 'version_so_id' })
+  versionSO: VersionSO;
 
-  @Column('text')
-  arquitecturaSO: string;
+  @ManyToOne(() => ArquitecturaSO)
+  @JoinColumn({ name: 'arquitectura_so_id' })
+  arquitecturaSO: ArquitecturaSO;
 
-  @Column('text')
-  estadoLicenciamiento: string;
+  @ManyToOne(() => EstadoLicenciamiento)
+  @JoinColumn({ name: 'estado_licenciamiento_id' })
+  estadoLicenciamiento: EstadoLicenciamiento;
 
-  @Column('text')
-  estadoFuncionamiento: string;
+  @ManyToOne(() => EstadoFuncionamiento)
+  @JoinColumn({ name: 'estado_funcionamiento_id' })
+  estadoFuncionamiento: EstadoFuncionamiento;
 
   @Column('text')
   serie: string;
 
-  @Column('text')
-  pantallaPulgadas: string;
+  @ManyToOne(() => TamanoPantalla)
+  @JoinColumn({ name: 'tamano_pantalla_id' })
+  pantallaPulgadas: TamanoPantalla;
 
-  @Column('text')
-  pantallaResolucion: string;
+  @ManyToOne(() => ResolucionPantalla)
+  @JoinColumn({ name: 'resolucion_pantalla_id' })
+  pantallaResolucion: ResolucionPantalla;
 
-  @Column('text')
-  pantallaTipo: string;
+  @ManyToOne(() => TipoPantalla)
+  @JoinColumn({ name: 'tipo_pantalla_id' })
+  pantallaTipo: TipoPantalla;
 
   @Column('int')
   cantidadPuertosUSB: number;
@@ -124,8 +150,9 @@ export class EquiposComputo {
   @Column('int')
   cantidadMicrofono: number;
 
-  @Column()
-  tipoAlmacenamientoExtraible: string;
+  @ManyToOne(() => TipoAlmacenamientoExtraible)
+  @JoinColumn({ name: 'tipo_almacenamiento_extraible_id' })
+  tipoAlmacenamientoExtraible: TipoAlmacenamientoExtraible;
 
   @Column({ type: 'date' })
   fechaVencimientoGarantia: Date;
@@ -133,8 +160,33 @@ export class EquiposComputo {
   @Column({ nullable: true })
   complemento: string;
 
+  @Column('int')
+  cantidadPuertosMiniHDMI: number;
 
-  
+  @Column('int')
+  cantidadPuertosTarjetaMemoria: number;
+
+  @Column('int')
+  cantidadPuertosDIN5: number;
+
+  @Column('int')
+  cantidadPuertosDIN6: number;
+
+  @Column('int')
+  cantidadPuertosMiniDIN: number;
+
+  @Column('varchar', { length: 50 })
+  mac: string;
+
+  @Column('int')
+  cantidadPuertosParalelo: number;
+
+  @Column('int')
+  cantidadPuertosDisplayPort: number;
+
+  @Column('int')
+  cantidadPuertoSerialCom1: number;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'usuario' })
   empleadoAsignado: User;
@@ -146,5 +198,4 @@ export class EquiposComputo {
   @ManyToOne(() => Departamento)
   @JoinColumn({ name: 'departamento' })
   departamentoArea: Departamento;
-
 }
