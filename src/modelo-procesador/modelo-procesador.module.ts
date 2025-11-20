@@ -3,9 +3,10 @@ import { ModeloProcesadorService } from './modelo-procesador.service';
 import { ModeloProcesadorController } from './modelo-procesador.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ModeloProcesador } from './entities/modelo-procesador.entity';
+import { TipoProcesadorModule } from 'src/tipo-procesador/tipo-procesador.module';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature( [ ModeloProcesador ] ) ],
+  imports: [ TypeOrmModule.forFeature( [ ModeloProcesador ] ), TipoProcesadorModule ],
   controllers: [ModeloProcesadorController],
   providers: [ModeloProcesadorService],
   exports: [ TypeOrmModule ]
