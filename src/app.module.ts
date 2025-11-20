@@ -17,6 +17,11 @@ import { TipoVelocidadModule } from './tipo-velocidad/tipo-velocidad.module';
 import { TipoAlmacenamientoExtraibleModule } from './tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
 import { TipoConexionRedModule } from './tipo-conexion-red/tipo-conexion-red.module';
 import { SistemaOperativoModule } from './sistema-operativo/sistema-operativo.module';
+import { VersionSoModule } from './version-so/version-so.module';
+import { ArquitecturaSoModule } from './arquitectura-so/arquitectura-so.module';
+import { EstadoLicenciamientoModule } from './estado-licenciamiento/estado-licenciamiento.module';
+import { EstadosSoModule } from './estados-so/estados-so.module';
+import { PantallaModule } from './pantalla/pantalla.module';
 
 @Module({
   imports: [
@@ -59,6 +64,11 @@ import { SistemaOperativoModule } from './sistema-operativo/sistema-operativo.mo
     TipoAlmacenamientoExtraibleModule,
     TipoConexionRedModule,
     SistemaOperativoModule,
+    VersionSoModule,
+    ArquitecturaSoModule,
+    EstadoLicenciamientoModule,
+    EstadosSoModule,
+    PantallaModule,
   ],
   controllers: [],
   providers: [],

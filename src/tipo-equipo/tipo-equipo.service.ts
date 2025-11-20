@@ -1,11 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateTipoEquipoDto } from './dto/create-tipo-equipo.dto';
 import { UpdateTipoEquipoDto } from './dto/update-tipo-equipo.dto';
+import { TipoEquipo } from './entities/tipo-equipo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
 export class TipoEquipoService {
-  create(createTipoEquipoDto: CreateTipoEquipoDto) {
-    return 'This action adds a new tipoEquipo';
+  constructor(
+    @InjectRepository(TipoEquipo)
+    private readonly tipoEquipoRepository: Repository<TipoEquipo>,
+  ) {}
+
+  async create(createTipoEquipoDto: CreateTipoEquipoDto) {
+    try {
+      const existente = await this.tipoEquipoRepository.findOneBy({
+        nombre: createTipoEquipoDto.nombre,
+      });
+
+      if (existente) {
+        throw new ConflictException(
+          'Ya existe un tipo de equipo con ese nombre',
+        );
+      }
+
+      const tipoEquipo = this.tipoEquipoRepository.create(createTipoEquipoDto);
+      await this.tipoEquipoRepository.save(tipoEquipo);
+
+      return 'Tipo de equipo creado exitosamente';
+
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Tipo-Equipo');
+    }
   }
 
   findAll() {

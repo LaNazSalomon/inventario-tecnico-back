@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity('sistema-operativo')
-export class SistemaOperativo {
+@Entity('arquitectura-so')
+export class ArquitecturaSO {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  nombre: string;
+  arquitectura: string; // Ej: x64, ARM64
 }

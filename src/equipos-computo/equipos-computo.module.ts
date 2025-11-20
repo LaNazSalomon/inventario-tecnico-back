@@ -11,6 +11,10 @@ import { ModeloProcesadorModule } from 'src/modelo-procesador/modelo-procesador.
 import { TipoVelocidadModule } from 'src/tipo-velocidad/tipo-velocidad.module';
 import { TipoAlmacenamientoExtraibleModule } from 'src/tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
 import { TipoConexionRedModule } from 'src/tipo-conexion-red/tipo-conexion-red.module';
+import { VersionSoModule } from 'src/version-so/version-so.module';
+import { EstadoLicenciamientoModule } from '../estado-licenciamiento/estado-licenciamiento.module';
+import { EstadosSoModule } from 'src/estados-so/estados-so.module';
+import { PantallaModule } from 'src/pantalla/pantalla.module';
 
 @Module({
   imports: [
@@ -22,6 +26,11 @@ import { TipoConexionRedModule } from 'src/tipo-conexion-red/tipo-conexion-red.m
     TipoVelocidadModule,
     TipoAlmacenamientoExtraibleModule,
     TipoConexionRedModule,
+    VersionSoModule,
+    TypeOrmModule,
+    EstadoLicenciamientoModule,
+    EstadosSoModule,
+    PantallaModule,
     TypeOrmModule.forFeature([EquiposComputo]),
   ],
   controllers: [EquiposComputoController],

@@ -8,14 +8,6 @@ import {
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 import { User } from 'src/users/entities/user.entity';
-import { SistemaOperativo } from 'src/catalogos/sistema-operativo.entity';
-import { VersionSO } from 'src/catalogos/version-so.entity';
-import { ArquitecturaSO } from 'src/catalogos/arquitectura-so.entity';
-import { EstadoLicenciamiento } from 'src/catalogos/estado-licenciamiento.entity';
-import { EstadoFuncionamiento } from 'src/catalogos/estado-funcionamiento.entity';
-import { TipoPantalla } from 'src/catalogos/tipo-pantalla.entity';
-import { ResolucionPantalla } from 'src/catalogos/resolucion-pantalla.entity';
-import { TamanoPantalla } from 'src/catalogos/tamano-pantalla.entity';
 import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
 import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
 import { TipoEquipo } from 'src/tipo-equipo/entities/tipo-equipo.entity';
@@ -24,6 +16,11 @@ import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesad
 import { TipoVelocidad } from 'src/tipo-velocidad/entities/tipo-velocidad.entity';
 import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
 import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-red.entity';
+import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
+import { VersionSO } from 'src/version-so/entities/version-so.entity';
+import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
+import { EstadoFuncionamiento, EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
+import { ResolucionPantalla, TamanoPantalla, TipoPantalla } from 'src/pantalla/entities/pantalla.entity';
 
 @Entity('equipo-computo')
 export class EquiposComputo {

@@ -1,11 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateMarcaEquipoDto } from './dto/create-marca-equipo.dto';
 import { UpdateMarcaEquipoDto } from './dto/update-marca-equipo.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MarcaEquipo } from './entities/marca-equipo.entity';
+import { Repository } from 'typeorm';
+import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
 export class MarcaEquipoService {
-  create(createMarcaEquipoDto: CreateMarcaEquipoDto) {
-    return 'This action adds a new marcaEquipo';
+  constructor(
+    @InjectRepository(MarcaEquipo)
+    private readonly marcaEquipoRepository: Repository<MarcaEquipo>,
+  ) {}
+
+  async create(createMarcaEquipoDto: CreateMarcaEquipoDto) {
+    try {
+      const existente = await this.marcaEquipoRepository.findOneBy({
+        nombre: createMarcaEquipoDto.nombre,
+      });
+
+      if (existente) {
+        throw new ConflictException(
+          'Ya existe una marca con ese nombre',
+        );
+      }
+
+
+      const marcaEquipo = this.marcaEquipoRepository.create( createMarcaEquipoDto );
+      await this.marcaEquipoRepository.save( marcaEquipo );
+
+      return 'Marca registrada correctamente.';
+
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
+    }
   }
 
   findAll() {

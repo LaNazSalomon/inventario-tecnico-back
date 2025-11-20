@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,7 +26,7 @@ export class UsersController {
 
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
-    return this.usersService.findAll( paginationDto );
+    return this.usersService.findAll(paginationDto);
   }
 
   @Get(':id')
@@ -25,7 +35,10 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -35,8 +48,8 @@ export class UsersController {
   }
 
   //Login
-    @Post( 'login' )
-  login( @Body() loginDto: LoginDto ) {
-    return this.usersService.login( loginDto );
+  @Post('login')
+  login(@Body() loginDto: LoginDto) {
+    return this.usersService.login(loginDto);
   }
 }
