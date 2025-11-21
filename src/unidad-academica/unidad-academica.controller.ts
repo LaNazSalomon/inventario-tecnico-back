@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { UnidadAcademicaService } from './unidad-academica.service';
 import { CreateUnidadAcademicaDto } from './dto/create-unidad-academica.dto';
 import { UpdateUnidadAcademicaDto } from './dto/update-unidad-academica.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('unidad-academica')
 export class UnidadAcademicaController {
@@ -13,22 +14,22 @@ export class UnidadAcademicaController {
   }
 
   @Get()
-  findAll() {
-    return this.unidadAcademicaService.findAll();
+  findAll( @Query() paginationDto: PaginationDto ) {
+    return this.unidadAcademicaService.findAll( paginationDto );
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.unidadAcademicaService.findOne(+id);
+  findByTerm(@Param('term') term: string) {
+    return this.unidadAcademicaService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUnidadAcademicaDto: UpdateUnidadAcademicaDto) {
-    return this.unidadAcademicaService.update(+id, updateUnidadAcademicaDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUnidadAcademicaDto: UpdateUnidadAcademicaDto) {
+    return this.unidadAcademicaService.update(id, updateUnidadAcademicaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.unidadAcademicaService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.unidadAcademicaService.remove( id );
   }
 }
