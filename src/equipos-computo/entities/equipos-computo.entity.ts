@@ -19,8 +19,9 @@ import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-re
 import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
 import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
-import { EstadoFuncionamiento, EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
+import { EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
 import { ResolucionPantalla, TamanoPantalla, TipoPantalla } from 'src/pantalla/entities/pantalla.entity';
+import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 
 @Entity('equipo-computo')
 export class EquiposComputo {
@@ -111,6 +112,7 @@ export class EquiposComputo {
   @Column('text')
   serie: string;
 
+  //* Vamos por aca
   @ManyToOne(() => TamanoPantalla)
   @JoinColumn({ name: 'tamano_pantalla_id' })
   pantallaPulgadas: TamanoPantalla;

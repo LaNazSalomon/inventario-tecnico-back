@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ArquitecturaSoService } from './arquitectura-so.service';
 import { CreateArquitecturaSoDto } from './dto/create-arquitectura-so.dto';
 import { UpdateArquitecturaSoDto } from './dto/update-arquitectura-so.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('arquitectura-so')
 export class ArquitecturaSoController {
@@ -13,22 +14,22 @@ export class ArquitecturaSoController {
   }
 
   @Get()
-  findAll() {
-    return this.arquitecturaSoService.findAll();
+  findAll( @Query() paginationDto: PaginationDto) {
+    return this.arquitecturaSoService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.arquitecturaSoService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.arquitecturaSoService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArquitecturaSoDto: UpdateArquitecturaSoDto) {
-    return this.arquitecturaSoService.update(+id, updateArquitecturaSoDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateArquitecturaSoDto: UpdateArquitecturaSoDto) {
+    return this.arquitecturaSoService.update(id, updateArquitecturaSoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.arquitecturaSoService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.arquitecturaSoService.remove(id);
   }
 }
