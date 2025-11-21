@@ -46,7 +46,6 @@ export class UnidadAcademicaService {
     if (isUUID(term)) {
       unidadAcademica = await this.unidadAcademicaRepository.findOne({
         where: { idUnidadAcademica: term },
-        relations: ['departamentos'], // importante si quieres traer los departamentos
       });
     } else {
       const queryBuilder =
