@@ -13,7 +13,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Puesto } from 'src/puesto/entities/puesto.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
-import { LoginDto } from 'src/puesto/dto/login.dto';
+import { LoginDto } from 'src/users/dto/login.dto';
 import { MensajePassword } from 'src/common/helpers/MensajePassword.email';
 import { CONSTANTES } from 'src/common/helpers/constantes.helper';
 import { CreateEmailDto } from 'src/emails/dto/create-email.dto';
