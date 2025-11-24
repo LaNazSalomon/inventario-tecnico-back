@@ -107,7 +107,7 @@ export class UsersService {
     return users;
   }
 
-  async findOne(term: string) {
+  async findByTerm(term: string) {
     let users: User | User[] | null;
 
     if (isUUID(term)) {
@@ -207,7 +207,7 @@ export class UsersService {
 
   async remove(id: string) {
     try {
-      const user = await this.findOne(id);
+      const user = await this.findByTerm(id);
 
       if (!user) {
         throw new NotFoundException(
