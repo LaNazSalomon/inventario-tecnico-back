@@ -33,8 +33,7 @@ export class ResolucionPantallaService {
     }
   }
 
-  async findByTerm(term: string, paginationDto: PaginationDto) {
-    const { limit = 50, offset = 0 } = paginationDto;
+  async findByTerm(term: string) {
     let resoluciones: ResolucionPantalla | ResolucionPantalla[] | null;
 
     try {
@@ -43,8 +42,6 @@ export class ResolucionPantallaService {
       } else {
         resoluciones = await this.resolucionRepository.createQueryBuilder('resolucion')
           .where('resolucion.resolucion ILIKE :term', { term: `%${term}%` })
-          .take(limit)
-          .skip(offset)
           .getMany();
       }
 

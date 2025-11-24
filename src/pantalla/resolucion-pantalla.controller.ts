@@ -21,8 +21,8 @@ export class ResolucionPantallaController {
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string, @Query() paginationDto: PaginationDto) {
-    return this.resolucionService.findByTerm(term, paginationDto);
+  findByTerm(@Param('term') term: string) {
+    return this.resolucionService.findByTerm(term);
   }
 
   @Patch(':id')
