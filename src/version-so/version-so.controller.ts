@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { VersionSoService } from './version-so.service';
 import { CreateVersionSoDto } from './dto/create-version-so.dto';
 import { UpdateVersionSoDto } from './dto/update-version-so.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('version-so')
 export class VersionSoController {
@@ -13,22 +24,25 @@ export class VersionSoController {
   }
 
   @Get()
-  findAll() {
-    return this.versionSoService.findAll();
+  findAll(@Query() PaginationDto: PaginationDto) {
+    return this.versionSoService.findAll(PaginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.versionSoService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.versionSoService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVersionSoDto: UpdateVersionSoDto) {
-    return this.versionSoService.update(+id, updateVersionSoDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateVersionSoDto: UpdateVersionSoDto,
+  ) {
+    return this.versionSoService.update(id, updateVersionSoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.versionSoService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.versionSoService.remove(id);
   }
 }
