@@ -15,6 +15,11 @@ import { VersionSoModule } from 'src/version-so/version-so.module';
 import { EstadoLicenciamientoModule } from '../estado-licenciamiento/estado-licenciamiento.module';
 import { EstadosSoModule } from 'src/estados-so/estados-so.module';
 import { PantallaModule } from 'src/pantalla/pantalla.module';
+import { SistemaOperativoModule } from 'src/sistema-operativo/sistema-operativo.module';
+import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
+import { ArquitecturaSoModule } from 'src/arquitectura-so/arquitectura-so.module';
+import { UsersModule } from 'src/users/users.module';
+import { DepartamentoModule } from 'src/departamento/departamento.module';
 
 @Module({
   imports: [
@@ -31,6 +36,11 @@ import { PantallaModule } from 'src/pantalla/pantalla.module';
     EstadoLicenciamientoModule,
     EstadosSoModule,
     PantallaModule,
+    SistemaOperativoModule,
+    UnidadAcademicaModule,
+    ArquitecturaSoModule,
+    UsersModule,
+    DepartamentoModule,
     TypeOrmModule.forFeature([EquiposComputo]),
   ],
   controllers: [EquiposComputoController],

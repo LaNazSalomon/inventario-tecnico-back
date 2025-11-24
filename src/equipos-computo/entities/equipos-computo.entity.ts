@@ -20,8 +20,10 @@ import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operati
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
 import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
 import { EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
-import { ResolucionPantalla, TamanoPantalla, TipoPantalla } from 'src/pantalla/entities/pantalla.entity';
 import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
+import { TamanoPantalla } from 'src/pantalla/entities/tamano-pantalla.entity';
+import { ResolucionPantalla } from 'src/pantalla/entities/resolucion-pantalla.entity';
+import { TipoPantalla } from 'src/pantalla/entities/tipo-pantalla.entity';
 
 @Entity('equipo-computo')
 export class EquiposComputo {

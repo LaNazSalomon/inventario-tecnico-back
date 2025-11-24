@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EstadoLicenciamiento } from './entities/estado-licenciamiento.entity';
 import { EstadoFuncionamiento } from './entities/estado-funcionamiento.entity';
 import { EstadoFuncionamientoController } from './estado-funcionamiento.controller';
+import { EstadoFuncionamientoService } from './estado-funcionamiento.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EstadoLicenciamiento, EstadoFuncionamiento])],
   controllers: [EstadoLicenciamientoController, EstadoFuncionamientoController],
-  providers: [EstadoLicenciamientoService],
+  providers: [EstadoLicenciamientoService, EstadoFuncionamientoService],
   exports: [TypeOrmModule],
 })
 export class EstadoLicenciamientoModule {}

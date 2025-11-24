@@ -1,26 +1,351 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEquiposComputoDto } from './dto/create-equipos-computo.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { isUUID } from 'class-validator';
+import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 import { UpdateEquiposComputoDto } from './dto/update-equipos-computo.dto';
+import { EquiposComputo } from './entities/equipos-computo.entity';
+import { CreateEquiposComputoDto } from './dto/create-equipos-computo.dto';
+import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
+import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
+import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
+import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
+import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
+import { ResolucionPantalla } from 'src/pantalla/entities/resolucion-pantalla.entity';
+import { TamanoPantalla } from 'src/pantalla/entities/tamano-pantalla.entity';
+import { TipoPantalla } from 'src/pantalla/entities/tipo-pantalla.entity';
+import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
+import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
+import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-red.entity';
+import { TipoEquipo } from 'src/tipo-equipo/entities/tipo-equipo.entity';
+import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
+import { TipoVelocidad } from 'src/tipo-velocidad/entities/tipo-velocidad.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
+import { User } from 'src/users/entities/user.entity';
+import { VersionSO } from 'src/version-so/entities/version-so.entity';
 
 @Injectable()
 export class EquiposComputoService {
-  create(createEquiposComputoDto: CreateEquiposComputoDto) {
-    return 'This action adds a new equiposComputo';
+  constructor(
+    @InjectRepository(EquiposComputo)
+    private readonly equiposRepository: Repository<EquiposComputo>,
+
+    @InjectRepository(TipoEquipo)
+    private readonly tipoEquipoRepository: Repository<TipoEquipo>,
+
+    @InjectRepository(MarcaEquipo)
+    private readonly marcaRepository: Repository<MarcaEquipo>,
+
+    @InjectRepository(ModeloEquipo)
+    private readonly modeloRepository: Repository<ModeloEquipo>,
+
+    @InjectRepository(TipoConexionRed)
+    private readonly tipoConexionRedRepository: Repository<TipoConexionRed>,
+
+    @InjectRepository(TipoProcesador)
+    private readonly tipoProcesadorRepository: Repository<TipoProcesador>,
+
+    @InjectRepository(ModeloProcesador)
+    private readonly modeloProcesadorRepository: Repository<ModeloProcesador>,
+
+    @InjectRepository(TipoVelocidad)
+    private readonly tipoVelocidadRepository: Repository<TipoVelocidad>,
+
+    @InjectRepository(SistemaOperativo)
+    private readonly sistemaOperativoRepository: Repository<SistemaOperativo>,
+
+    @InjectRepository(VersionSO)
+    private readonly versionSORepository: Repository<VersionSO>,
+
+    @InjectRepository(ArquitecturaSO)
+    private readonly arquitecturaSORepository: Repository<ArquitecturaSO>,
+
+    @InjectRepository(EstadoLicenciamiento)
+    private readonly estadoLicenciamientoRepository: Repository<EstadoLicenciamiento>,
+
+    @InjectRepository(EstadoFuncionamiento)
+    private readonly estadoFuncionamientoRepository: Repository<EstadoFuncionamiento>,
+
+    @InjectRepository(TamanoPantalla)
+    private readonly tamanoPantallaRepository: Repository<TamanoPantalla>,
+
+    @InjectRepository(ResolucionPantalla)
+    private readonly resolucionPantallaRepository: Repository<ResolucionPantalla>,
+
+    @InjectRepository(TipoPantalla)
+    private readonly tipoPantallaRepository: Repository<TipoPantalla>,
+
+    @InjectRepository(TipoAlmacenamientoExtraible)
+    private readonly tipoAlmacenamientoExtraibleRepository: Repository<TipoAlmacenamientoExtraible>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadAcademicaRepository: Repository<UnidadAcademica>,
+
+    @InjectRepository(Departamento)
+    private readonly departamentoRepository: Repository<Departamento>,
+  ) {}
+
+  async create(createEquiposDto: CreateEquiposComputoDto) {
+    try {
+      // Buscar las entidades relacionadas
+      const tipoEquipo = await this.tipoEquipoRepository.findOneBy({
+        id: createEquiposDto.tipoEquipoId,
+      });
+      const marca = await this.marcaRepository.findOneBy({
+        id: createEquiposDto.marcaId,
+      });
+      const modelo = await this.modeloRepository.findOneBy({
+        id: createEquiposDto.modeloId,
+      });
+      const tipoConexionRed = await this.tipoConexionRedRepository.findOneBy({
+        id: createEquiposDto.tipoConexionRedId,
+      });
+      const tipoProcesador = await this.tipoProcesadorRepository.findOneBy({
+        id: createEquiposDto.tipoProcesadorId,
+      });
+      const modeloProcesador = await this.modeloProcesadorRepository.findOneBy({
+        id: createEquiposDto.modeloProcesadorId,
+      });
+      const tipoVelocidad = await this.tipoVelocidadRepository.findOneBy({
+        id: createEquiposDto.tipoVelocidadId,
+      });
+      const sistemaOperativo = await this.sistemaOperativoRepository.findOneBy({
+        id: createEquiposDto.sistemaOperativoId,
+      });
+      const versionSO = await this.versionSORepository.findOneBy({
+        id: createEquiposDto.versionSOId,
+      });
+      const arquitecturaSO = await this.arquitecturaSORepository.findOneBy({
+        id: createEquiposDto.arquitecturaSOId,
+      });
+      const estadoLicenciamiento =
+        await this.estadoLicenciamientoRepository.findOneBy({
+          id: createEquiposDto.estadoLicenciamientoId,
+        });
+      const estadoFuncionamiento =
+        await this.estadoFuncionamientoRepository.findOneBy({
+          id: createEquiposDto.estadoFuncionamientoId,
+        });
+      const pantallaPulgadas = await this.tamanoPantallaRepository.findOneBy({
+        id: createEquiposDto.pantallaPulgadasId,
+      });
+      const pantallaResolucion =
+        await this.resolucionPantallaRepository.findOneBy({
+          id: createEquiposDto.pantallaResolucionId,
+        });
+      const pantallaTipo = await this.tipoPantallaRepository.findOneBy({
+        id: createEquiposDto.pantallaTipoId,
+      });
+      const tipoAlmacenamientoExtraible =
+        await this.tipoAlmacenamientoExtraibleRepository.findOneBy({
+          id: createEquiposDto.tipoAlmacenamientoExtraibleId,
+        });
+      const empleadoAsignado = await this.userRepository.findOneBy({
+        idEmpleado: createEquiposDto.empleadoAsignadoId,
+      });
+      const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+        idUnidadAcademica: createEquiposDto.unidadAcademicaId,
+      });
+      const departamentoArea = await this.departamentoRepository.findOneBy({
+        idDepartamento: createEquiposDto.departamentoAreaId,
+      });
+
+      // Validar relaciones críticas
+      if (!tipoEquipo)
+        throw new NotFoundException('Tipo de equipo no encontrado');
+      if (!marca) throw new NotFoundException('Marca no encontrada');
+      if (!modelo) throw new NotFoundException('Modelo no encontrado');
+
+      if (!tipoConexionRed)
+        throw new NotFoundException('Tipo de conexión de red no encontrado');
+      if (!tipoProcesador)
+        throw new NotFoundException('Tipo de procesador no encontrado');
+      if (!modeloProcesador)
+        throw new NotFoundException('Modelo de procesador no encontrado');
+      if (!tipoVelocidad)
+        throw new NotFoundException('Tipo de velocidad no encontrado');
+      if (!sistemaOperativo)
+        throw new NotFoundException('Sistema operativo no encontrado');
+      if (!versionSO)
+        throw new NotFoundException('Versión de SO no encontrada');
+      if (!arquitecturaSO)
+        throw new NotFoundException('Arquitectura de SO no encontrada');
+      if (!estadoLicenciamiento)
+        throw new NotFoundException('Estado de licenciamiento no encontrado');
+      if (!estadoFuncionamiento)
+        throw new NotFoundException('Estado de funcionamiento no encontrado');
+      if (!pantallaPulgadas)
+        throw new NotFoundException('Tamaño de pantalla no encontrado');
+      if (!pantallaResolucion)
+        throw new NotFoundException('Resolución de pantalla no encontrada');
+      if (!pantallaTipo)
+        throw new NotFoundException('Tipo de pantalla no encontrado');
+      if (!tipoAlmacenamientoExtraible)
+        throw new NotFoundException(
+          'Tipo de almacenamiento extraíble no encontrado',
+        );
+      if (!empleadoAsignado)
+        throw new NotFoundException('Empleado asignado no encontrado');
+      if (!unidadAcademica)
+        throw new NotFoundException('Unidad académica no encontrada');
+      if (!departamentoArea)
+        throw new NotFoundException('Departamento/Área no encontrado');
+
+      // Crear el equipo con las relaciones cargadas
+      const equipo = this.equiposRepository.create({
+        inventario: createEquiposDto.inventario,
+        nombreEquipo: createEquiposDto.nombreEquipo,
+        direccionIP: createEquiposDto.direccionIP,
+        direccionServidorDNS: createEquiposDto.direccionServidorDNS,
+        mascaraSubRed: createEquiposDto.mascaraSubRed,
+        puertaEnlace: createEquiposDto.puertaEnlace,
+        nombreDominio: createEquiposDto.nombreDominio,
+        velocidadProcesador: createEquiposDto.velocidadProcesador,
+        nucleos: createEquiposDto.nucleos,
+        capacidadRam: createEquiposDto.capacidadRam,
+        capacidadAlmacenamiento: createEquiposDto.capacidadAlmacenamiento,
+        serie: createEquiposDto.serie,
+        cantidadPuertosUSB: createEquiposDto.cantidadPuertosUSB,
+        cantidadPuertosAudio: createEquiposDto.cantidadPuertosAudio,
+        cantidadPuertosRed: createEquiposDto.cantidadPuertosRed,
+        cantidadPuertosHDMI: createEquiposDto.cantidadPuertosHDMI,
+        cantidadPuertosVGA: createEquiposDto.cantidadPuertosVGA,
+        cantidadPuertosDVI: createEquiposDto.cantidadPuertosDVI,
+        cantidadPuertosSerial: createEquiposDto.cantidadPuertosSerial,
+        cantidadCamaraWeb: createEquiposDto.cantidadCamaraWeb,
+        cantidadMicrofono: createEquiposDto.cantidadMicrofono,
+        fechaVencimientoGarantia: createEquiposDto.fechaVencimientoGarantia,
+        complemento: createEquiposDto.complemento,
+        cantidadPuertosMiniHDMI: createEquiposDto.cantidadPuertosMiniHDMI,
+        cantidadPuertosTarjetaMemoria:
+          createEquiposDto.cantidadPuertosTarjetaMemoria,
+        cantidadPuertosDIN5: createEquiposDto.cantidadPuertosDIN5,
+        cantidadPuertosDIN6: createEquiposDto.cantidadPuertosDIN6,
+        cantidadPuertosMiniDIN: createEquiposDto.cantidadPuertosMiniDIN,
+        mac: createEquiposDto.mac,
+        cantidadPuertosParalelo: createEquiposDto.cantidadPuertosParalelo,
+        cantidadPuertosDisplayPort: createEquiposDto.cantidadPuertosDisplayPort,
+        cantidadPuertoSerialCom1: createEquiposDto.cantidadPuertoSerialCom1,
+
+        // Relaciones
+        tipoEquipo: tipoEquipo,
+        marca: marca,
+        modelo: modelo,
+        tipoConexionRed: tipoConexionRed,
+        tipoProcesador: tipoProcesador,
+        modeloProcesador: modeloProcesador,
+        tipoVelocidad: tipoVelocidad,
+        sistemaOperativo: sistemaOperativo,
+        versionSO: versionSO,
+        arquitecturaSO: arquitecturaSO,
+        estadoLicenciamiento: estadoLicenciamiento,
+        estadoFuncionamiento: estadoFuncionamiento,
+        pantallaPulgadas: pantallaPulgadas,
+        pantallaResolucion: pantallaResolucion,
+        pantallaTipo: pantallaTipo,
+        tipoAlmacenamientoExtraible: tipoAlmacenamientoExtraible,
+        empleadoAsignado: empleadoAsignado,
+        unidadAcademica: unidadAcademica,
+        departamentoArea: departamentoArea,
+      });
+
+      return await this.equiposRepository.save(equipo);
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    }
   }
 
-  findAll() {
-    return `This action returns all equiposComputo`;
+  async findAll(paginationDto: PaginationDto) {
+    try {
+      const { limit = 50, offset = 0 } = paginationDto;
+      return await this.equiposRepository.find({
+        take: limit,
+        skip: offset,
+        relations: [
+          'tipoEquipo',
+          'marca',
+          'modelo',
+          'tipoConexionRed',
+          'tipoProcesador',
+          'modeloProcesador',
+          'tipoVelocidad',
+          'sistemaOperativo',
+          'versionSO',
+          'arquitecturaSO',
+          'estadoLicenciamiento',
+          'estadoFuncionamiento',
+          'pantallaPulgadas',
+          'pantallaResolucion',
+          'pantallaTipo',
+          'tipoAlmacenamientoExtraible',
+          'empleadoAsignado',
+          'unidadAcademica',
+          'departamentoArea',
+        ],
+      });
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} equiposComputo`;
+  async findByTerm(term: string) {
+    let equipos: EquiposComputo | EquiposComputo[] | null;
+
+    try {
+      if (isUUID(term)) {
+        equipos = await this.equiposRepository.findOne({
+          where: { id: term },
+          relations: ['tipoEquipo', 'marca', 'modelo'],
+        });
+      } else {
+        equipos = await this.equiposRepository
+          .createQueryBuilder('equipo')
+          .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
+          .leftJoinAndSelect('equipo.marca', 'marca')
+          .leftJoinAndSelect('equipo.modelo', 'modelo')
+          .where(
+            'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
+            { term: `%${term}%` },
+          )
+          .getMany();
+      }
+
+      if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
+        throw new NotFoundException('No se encontró ningún equipo de cómputo');
+      }
+
+      return equipos;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    }
   }
 
-  update(id: number, updateEquiposComputoDto: UpdateEquiposComputoDto) {
-    return `This action updates a #${id} equiposComputo`;
+  async update(id: string, updateDto: UpdateEquiposComputoDto) {
+    try {
+      const equipo = await this.equiposRepository.preload({ id, ...updateDto });
+      if (!equipo)
+        throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
+      return await this.equiposRepository.save(equipo);
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} equiposComputo`;
+  async remove(id: string) {
+    try {
+      const equipo = await this.equiposRepository.findOneBy({ id });
+      if (!equipo)
+        throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
+      await this.equiposRepository.remove(equipo);
+      return `Equipo de cómputo con ID ${id} eliminado correctamente`;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    }
   }
 }

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
 import { TipoAlmacenamientoExtraibleService } from './tipo-almacenamiento-extraible.service';
 import { CreateTipoAlmacenamientoExtraibleDto } from './dto/create-tipo-almacenamiento-extraible.dto';
 import { UpdateTipoAlmacenamientoExtraibleDto } from './dto/update-tipo-almacenamiento-extraible.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('tipo-almacenamiento-extraible')
 export class TipoAlmacenamientoExtraibleController {
@@ -13,22 +14,22 @@ export class TipoAlmacenamientoExtraibleController {
   }
 
   @Get()
-  findAll() {
-    return this.tipoAlmacenamientoExtraibleService.findAll();
+  findAll( @Query() paginationDto: PaginationDto) {
+    return this.tipoAlmacenamientoExtraibleService.findAll( paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tipoAlmacenamientoExtraibleService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.tipoAlmacenamientoExtraibleService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTipoAlmacenamientoExtraibleDto: UpdateTipoAlmacenamientoExtraibleDto) {
-    return this.tipoAlmacenamientoExtraibleService.update(+id, updateTipoAlmacenamientoExtraibleDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTipoAlmacenamientoExtraibleDto: UpdateTipoAlmacenamientoExtraibleDto) {
+    return this.tipoAlmacenamientoExtraibleService.update( id, updateTipoAlmacenamientoExtraibleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tipoAlmacenamientoExtraibleService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tipoAlmacenamientoExtraibleService.remove( id );
   }
 }

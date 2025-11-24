@@ -1,179 +1,161 @@
-import {
-  IsString,
-  IsInt,
-  IsNumber,
-  IsDate,
-  IsOptional,
-  IsNotEmpty,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { 
+  IsNotEmpty, IsString, IsInt, IsUUID, IsNumber, IsOptional, IsDateString 
+} from "class-validator";
 
 export class CreateEquiposComputoDto {
-  @IsString({ message: 'El campo inventarioCSYT debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El campo inventarioCSYT es obligatorio' })
-  inventarioCSYT: string;
+  @IsInt({ message: 'El inventario debe ser un número entero' })
+  @IsNotEmpty({ message: 'El inventario no puede estar vacío' })
+  inventario: number;
 
-  @IsString({ message: 'El nombre del equipo debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El nombre del equipo es obligatorio' })
+  @IsString({ message: 'El nombre del equipo tiene que ser texto' })
+  @IsNotEmpty({ message: 'El nombre del equipo no puede estar vacío' })
   nombreEquipo: string;
 
-  @IsString({ message: 'El tipo de equipo debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de equipo es obligatorio' })
-  tipoEquipo: string;
+  @IsUUID('4', { message: 'El tipo de equipo debe ser un UUID válido' })
+  tipoEquipoId: string;
 
-  @IsString({ message: 'La marca debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La marca es obligatoria' })
-  marca: string;
+  @IsUUID('4', { message: 'La marca debe ser un UUID válido' })
+  marcaId: string;
 
-  @IsString({ message: 'El modelo debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El modelo es obligatorio' })
-  modelo: string;
+  @IsUUID('4', { message: 'El modelo debe ser un UUID válido' })
+  modeloId: string;
 
-  @IsString({ message: 'La dirección IP debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La dirección IP es obligatoria' })
+  @IsString({ message: 'La dirección IP debe ser texto' })
   direccionIP: string;
 
-  @IsString({ message: 'El servidor DNS debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El servidor DNS es obligatorio' })
+  @IsString({ message: 'El DNS debe ser texto' })
   direccionServidorDNS: string;
 
-  @IsString({ message: 'La máscara de subred debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La máscara de subred es obligatoria' })
+  @IsString({ message: 'La máscara de subred debe ser texto' })
   mascaraSubRed: string;
 
-  @IsString({ message: 'La puerta de enlace debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La puerta de enlace es obligatoria' })
+  @IsString({ message: 'La puerta de enlace debe ser texto' })
   puertaEnlace: string;
 
-  @IsString({ message: 'El nombre de dominio debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El nombre de dominio es obligatorio' })
+  @IsString({ message: 'El nombre de dominio debe ser texto' })
   nombreDominio: string;
 
-  @IsString({ message: 'El tipo de conexión debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de conexión es obligatorio' })
-  tipoConexionRed: string;
+  @IsUUID('4', { message: 'El tipo de conexión de red debe ser un UUID válido' })
+  tipoConexionRedId: string;
 
-  @IsString({ message: 'El tipo de procesador debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de procesador es obligatorio' })
-  tipoProcesador: string;
+  @IsUUID('4', { message: 'El tipo de procesador debe ser un UUID válido' })
+  tipoProcesadorId: string;
 
-  @IsString({ message: 'El modelo de procesador debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El modelo de procesador es obligatorio' })
-  modeloProcesador: string;
+  @IsUUID('4', { message: 'El modelo de procesador debe ser un UUID válido' })
+  modeloProcesadorId: string;
 
-  @IsNumber({}, { message: 'La velocidad del procesador debe ser un número' })
-  @Type(() => Number)
+  @IsNumber({}, { message: 'La velocidad del procesador debe ser numérica' })
   velocidadProcesador: number;
 
-  @IsString({ message: 'El tipo de velocidad debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de velocidad es obligatorio' })
-  tipoVelocidad: string;
+  @IsUUID('4', { message: 'El tipo de velocidad debe ser un UUID válido' })
+  tipoVelocidadId: string;
 
-  @IsInt({ message: 'El número de núcleos debe ser un entero' })
-  @Type(() => Number)
+  @IsInt({ message: 'El número de núcleos debe ser entero' })
   nucleos: number;
 
-  @IsString({ message: 'La capacidad RAM debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La capacidad RAM es obligatoria' })
+  @IsString({ message: 'La capacidad de RAM debe ser texto' })
   capacidadRam: string;
 
-  @IsString({ message: 'La capacidad de almacenamiento debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La capacidad de almacenamiento es obligatoria' })
+  @IsString({ message: 'La capacidad de almacenamiento debe ser texto' })
   capacidadAlmacenamiento: string;
 
-  @IsString({ message: 'El sistema operativo debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El sistema operativo es obligatorio' })
-  sistemaOperativo: string;
+  @IsUUID('4', { message: 'El sistema operativo debe ser un UUID válido' })
+  sistemaOperativoId: string;
 
-  @IsString({ message: 'La versión del SO debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La versión del SO es obligatoria' })
-  versionSO: string;
+  @IsUUID('4', { message: 'La versión del SO debe ser un UUID válido' })
+  versionSOId: string;
 
-  @IsString({ message: 'La arquitectura del SO debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La arquitectura del SO es obligatoria' })
-  arquitecturaSO: string;
+  @IsUUID('4', { message: 'La arquitectura del SO debe ser un UUID válido' })
+  arquitecturaSOId: string;
 
-  @IsString({ message: 'El estado de licenciamiento debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El estado de licenciamiento es obligatorio' })
-  estadoLicenciamiento: string;
+  @IsUUID('4', { message: 'El estado de licenciamiento debe ser un UUID válido' })
+  estadoLicenciamientoId: string;
 
-  @IsString({ message: 'El estado de funcionamiento debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El estado de funcionamiento es obligatorio' })
-  estadoFuncionamiento: string;
+  @IsUUID('4', { message: 'El estado de funcionamiento debe ser un UUID válido' })
+  estadoFuncionamientoId: string;
 
-  @IsString({ message: 'La serie debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La serie es obligatoria' })
+  @IsString({ message: 'La serie debe ser texto' })
   serie: string;
 
-  @IsString({ message: 'El tamaño de pantalla debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tamaño de pantalla es obligatorio' })
-  pantallaPulgadas: string;
+  @IsUUID('4', { message: 'El tamaño de pantalla debe ser un UUID válido' })
+  pantallaPulgadasId: string;
 
-  @IsString({ message: 'La resolución de pantalla debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La resolución de pantalla es obligatoria' })
-  pantallaResolucion: string;
+  @IsUUID('4', { message: 'La resolución de pantalla debe ser un UUID válido' })
+  pantallaResolucionId: string;
 
-  @IsString({ message: 'El tipo de pantalla debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de pantalla es obligatorio' })
-  pantallaTipo: string;
+  @IsUUID('4', { message: 'El tipo de pantalla debe ser un UUID válido' })
+  pantallaTipoId: string;
 
   @IsInt({ message: 'La cantidad de puertos USB debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosUSB: number;
 
   @IsInt({ message: 'La cantidad de puertos de audio debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosAudio: number;
 
   @IsInt({ message: 'La cantidad de puertos de red debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosRed: number;
 
   @IsInt({ message: 'La cantidad de puertos HDMI debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosHDMI: number;
 
   @IsInt({ message: 'La cantidad de puertos VGA debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosVGA: number;
 
   @IsInt({ message: 'La cantidad de puertos DVI debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosDVI: number;
 
   @IsInt({ message: 'La cantidad de puertos serial debe ser un número entero' })
-  @Type(() => Number)
   cantidadPuertosSerial: number;
 
   @IsInt({ message: 'La cantidad de cámaras web debe ser un número entero' })
-  @Type(() => Number)
   cantidadCamaraWeb: number;
 
   @IsInt({ message: 'La cantidad de micrófonos debe ser un número entero' })
-  @Type(() => Number)
   cantidadMicrofono: number;
 
-  @IsString({ message: 'El tipo de almacenamiento extraíble debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El tipo de almacenamiento extraíble es obligatorio' })
-  tipoAlmacenamientoExtraible: string;
+  @IsUUID('4', { message: 'El tipo de almacenamiento extraíble debe ser un UUID válido' })
+  tipoAlmacenamientoExtraibleId: string;
 
-  @IsDate({ message: 'La fecha de vencimiento de garantía debe ser una fecha válida' })
-  @Type(() => Date)
+  @IsDateString({}, { message: 'La fecha de vencimiento de garantía debe tener formato de fecha' })
   fechaVencimientoGarantia: Date;
 
-  @IsString({ message: 'El complemento debe ser una cadena de texto' })
+  @IsString({ message: 'El complemento debe ser texto' })
   @IsOptional()
   complemento?: string;
 
-  @IsInt({ message: 'El ID del usuario debe ser un número entero' })
-  @Type(() => Number)
-  usuario: number;
+  @IsInt({ message: 'La cantidad de puertos MiniHDMI debe ser un número entero' })
+  cantidadPuertosMiniHDMI: number;
 
-  @IsInt({ message: 'El ID de la unidad académica debe ser un número entero' })
-  @Type(() => Number)
-  unidadAcademica: number;
+  @IsInt({ message: 'La cantidad de puertos de tarjeta de memoria debe ser un número entero' })
+  cantidadPuertosTarjetaMemoria: number;
 
-  @IsInt({ message: 'El ID del departamento debe ser un número entero' })
-  @Type(() => Number)
-  departamento: number;
+  @IsInt({ message: 'La cantidad de puertos DIN5 debe ser un número entero' })
+  cantidadPuertosDIN5: number;
+
+  @IsInt({ message: 'La cantidad de puertos DIN6 debe ser un número entero' })
+  cantidadPuertosDIN6: number;
+
+  @IsInt({ message: 'La cantidad de puertos MiniDIN debe ser un número entero' })
+  cantidadPuertosMiniDIN: number;
+
+  @IsString({ message: 'La dirección MAC debe ser texto' })
+  mac: string;
+
+  @IsInt({ message: 'La cantidad de puertos paralelo debe ser un número entero' })
+  cantidadPuertosParalelo: number;
+
+  @IsInt({ message: 'La cantidad de puertos DisplayPort debe ser un número entero' })
+  cantidadPuertosDisplayPort: number;
+
+  @IsInt({ message: 'La cantidad de puertos Serial COM1 debe ser un número entero' })
+  cantidadPuertoSerialCom1: number;
+
+  @IsUUID('4', { message: 'El empleado asignado debe ser un UUID válido' })
+  empleadoAsignadoId: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido' })
+  unidadAcademicaId: string;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido' })
+  departamentoAreaId: string;
 }
