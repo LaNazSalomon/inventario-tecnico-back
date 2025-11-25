@@ -1,72 +1,106 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ModeloProcesador } from './entities/modelo-procesador.entity';
 import { CreateModeloProcesadorDto } from './dto/create-modelo-procesador.dto';
 import { UpdateModeloProcesadorDto } from './dto/update-modelo-procesador.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ModeloProcesador } from './entities/modelo-procesador.entity';
-import { Repository } from 'typeorm';
 import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
-import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ModeloProcesadorService {
   constructor(
     @InjectRepository(ModeloProcesador)
     private readonly modeloProcesadorRepository: Repository<ModeloProcesador>,
+
     @InjectRepository(TipoProcesador)
-    private readonly tipoProcesadorRepository: Repository<TipoProcesador>
-  ){}
+    private readonly tipoProcesadorRepository: Repository<TipoProcesador>,
+  ) {}
 
-  async create(createModeloProcesadorDto: CreateModeloProcesadorDto): Promise<string> {
-  try {
-    const { nombre, tipoProcesadorId } = createModeloProcesadorDto;
-
-    const tipoProcesador = await this.tipoProcesadorRepository.findOne({
-      where: { id: tipoProcesadorId },
+  async create(createDto: CreateModeloProcesadorDto) {
+    // Validar relación con TipoProcesador
+    const tipo = await this.tipoProcesadorRepository.findOneBy({
+      id: createDto.tipoProcesadorId,
     });
-
-    if (!tipoProcesador) {
-      throw new NotFoundException('No se encontró el tipo de procesador especificado.');
+    if (!tipo) {
+      throw new NotFoundException(
+        `Tipo de procesador con ID ${createDto.tipoProcesadorId} no encontrado`,
+      );
     }
 
-
-    const existente = await this.modeloProcesadorRepository.findOne({
-      where: {
-        nombre,
-        tipo:  { id: tipoProcesadorId },
-      },
-      relations: ['tipo'],
+    const modelo = this.modeloProcesadorRepository.create({
+      nombre: createDto.nombre,
+      tipo,
     });
 
-    if (existente) {
-      throw new ConflictException('Ya existe un modelo con ese nombre para este tipo de procesador.');
+    return await this.modeloProcesadorRepository.save(modelo);
+  }
+
+  async findAll() {
+    return await this.modeloProcesadorRepository.find({ relations: ['tipo'] });
+  }
+
+  async findByTerm(term: string) {
+    let modelo: ModeloProcesador | ModeloProcesador[] | null;
+
+    if (isUUID(term)) {
+      modelo = await this.modeloProcesadorRepository.findOne({
+        where: { id: term },
+        relations: ['tipo'],
+      });
+    } else {
+      modelo = await this.modeloProcesadorRepository
+        .createQueryBuilder('modelo')
+        .leftJoinAndSelect('modelo.tipo', 'tipo')
+        .where('modelo.nombre ILIKE :term', { term: `%${term}%` })
+        .getMany();
     }
 
-    const nuevoModelo = this.modeloProcesadorRepository.create({
-      nombre,
-      tipo: tipoProcesador,
+    if (!modelo || (Array.isArray(modelo) && modelo.length === 0)) {
+      throw new NotFoundException(
+        `No se encontró ningún modelo de procesador con el término: ${term}`,
+      );
+    }
+
+    return modelo;
+  }
+
+  async update(id: string, updateDto: UpdateModeloProcesadorDto) {
+    let tipo: TipoProcesador | null | undefined;
+    if (updateDto.tipoProcesadorId) {
+      tipo = await this.tipoProcesadorRepository.findOneBy({
+        id: updateDto.tipoProcesadorId,
+      });
+    }
+
+    if (!tipo) {
+      throw new NotFoundException(
+        `Tipo de procesador con ID ${updateDto.tipoProcesadorId} no encontrado`,
+      );
+    }
+
+    const modelo = await this.modeloProcesadorRepository.preload({
+      id,
+      ...updateDto,
+      tipo,
     });
 
-    await this.modeloProcesadorRepository.save(nuevoModelo);
+    if (!modelo) {
+      throw new NotFoundException(
+        `Modelo de procesador con ID ${id} no encontrado`,
+      );
+    }
 
-    return 'Modelo de procesador registrado exitosamente.';
-  } catch (err) {
-    ManejadorErroresDB.erroresDB(err, 'Modelo-Procesador');
-  }
-}
-
-  findAll() {
-    return `This action returns all modeloProcesador`;
+    return await this.modeloProcesadorRepository.save(modelo);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} modeloProcesador`;
-  }
-
-  update(id: number, updateModeloProcesadorDto: UpdateModeloProcesadorDto) {
-    return `This action updates a #${id} modeloProcesador`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} modeloProcesador`;
+  async remove(id: string) {
+    const modelo = await this.modeloProcesadorRepository.findOneBy({ id });
+    if (!modelo) {
+      throw new NotFoundException(
+        `Modelo de procesador con ID ${id} no encontrado`,
+      );
+    }
+    return await this.modeloProcesadorRepository.remove(modelo);
   }
 }
