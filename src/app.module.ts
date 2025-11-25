@@ -22,6 +22,9 @@ import { ArquitecturaSoModule } from './arquitectura-so/arquitectura-so.module';
 import { EstadoLicenciamientoModule } from './estado-licenciamiento/estado-licenciamiento.module';
 import { EstadosSoModule } from './estados-so/estados-so.module';
 import { PantallaModule } from './pantalla/pantalla.module';
+import { TecladoModule } from './teclado/teclado.module';
+import { MouseModule } from './mouse/mouse.module';
+import { MonitorModule } from './monitor/monitor.module';
 
 @Module({
   imports: [
@@ -69,6 +72,9 @@ import { PantallaModule } from './pantalla/pantalla.module';
     EstadoLicenciamientoModule,
     EstadosSoModule,
     PantallaModule,
+    TecladoModule,
+    MouseModule,
+    MonitorModule,
   ],
   controllers: [],
   providers: [],
