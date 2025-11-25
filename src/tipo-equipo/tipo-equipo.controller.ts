@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query } from '@nestjs/common';
 import { TipoEquipoService } from './tipo-equipo.service';
 import { CreateTipoEquipoDto } from './dto/create-tipo-equipo.dto';
 import { UpdateTipoEquipoDto } from './dto/update-tipo-equipo.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('tipo-equipo')
 export class TipoEquipoController {
@@ -13,22 +14,22 @@ export class TipoEquipoController {
   }
 
   @Get()
-  findAll() {
-    return this.tipoEquipoService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.tipoEquipoService.findAll( paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tipoEquipoService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.tipoEquipoService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTipoEquipoDto: UpdateTipoEquipoDto) {
-    return this.tipoEquipoService.update(+id, updateTipoEquipoDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTipoEquipoDto: UpdateTipoEquipoDto) {
+    return this.tipoEquipoService.update(id, updateTipoEquipoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tipoEquipoService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tipoEquipoService.remove(id);
   }
 }

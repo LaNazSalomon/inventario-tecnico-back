@@ -18,7 +18,7 @@ export class PuestoController {
     return this.puestoService.findAll( paginationDto );
   }
 
-  @Get(':id')
+  @Get(':term')
   findByTerm(@Param('term') term: string) {
     return this.puestoService.findByTerm(term);
   }

@@ -21,8 +21,8 @@ export class TipoPantallaController {
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string, @Query() paginationDto: PaginationDto) {
-    return this.tipoPantallaService.findByTerm(term, paginationDto);
+  findByTerm(@Param('term') term: string) {
+    return this.tipoPantallaService.findByTerm(term);
   }
 
   @Patch(':id')

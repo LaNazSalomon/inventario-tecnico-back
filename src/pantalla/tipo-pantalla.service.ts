@@ -33,8 +33,7 @@ export class TipoPantallaService {
     }
   }
 
-  async findByTerm(term: string, paginationDto: PaginationDto) {
-    const { limit = 50, offset = 0 } = paginationDto;
+  async findByTerm(term: string) {
     let tipos: TipoPantalla | TipoPantalla[] | null;
 
     try {
@@ -43,8 +42,6 @@ export class TipoPantallaService {
       } else {
         tipos = await this.tipoPantallaRepository.createQueryBuilder('tipo')
           .where('tipo.tipo ILIKE :term', { term: `%${term}%` })
-          .take(limit)
-          .skip(offset)
           .getMany();
       }
 

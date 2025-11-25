@@ -21,8 +21,8 @@ export class TamanoPantallaController {
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string, @Query() paginationDto: PaginationDto) {
-    return this.tamanoService.findByTerm(term, paginationDto);
+  findByTerm(@Param('term') term: string) {
+    return this.tamanoService.findByTerm(term);
   }
 
   @Patch(':id')

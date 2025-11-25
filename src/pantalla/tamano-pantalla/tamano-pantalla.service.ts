@@ -33,8 +33,7 @@ export class TamanoPantallaService {
     }
   }
 
-  async findByTerm(term: string, paginationDto: PaginationDto) {
-    const { limit = 50, offset = 0 } = paginationDto;
+  async findByTerm(term: string) {
     let tamanos: TamanoPantalla | TamanoPantalla[] | null;
 
     try {
@@ -43,8 +42,6 @@ export class TamanoPantallaService {
       } else {
         tamanos = await this.tamanoRepository.createQueryBuilder('tamano')
           .where('tamano.pulgadas ILIKE :term', { term: `%${term}%` })
-          .take(limit)
-          .skip(offset)
           .getMany();
       }
 

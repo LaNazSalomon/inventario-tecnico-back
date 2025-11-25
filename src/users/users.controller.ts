@@ -29,9 +29,9 @@ export class UsersController {
     return this.usersService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.usersService.findByTerm(term);
   }
 
   @Patch(':id')
