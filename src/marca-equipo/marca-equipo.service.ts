@@ -1,9 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MarcaEquipo } from './entities/marca-equipo.entity';
 import { CreateMarcaEquipoDto } from './dto/create-marca-equipo.dto';
 import { UpdateMarcaEquipoDto } from './dto/update-marca-equipo.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MarcaEquipo } from './entities/marca-equipo.entity';
-import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { isUUID } from 'class-validator';
 import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
@@ -13,42 +15,72 @@ export class MarcaEquipoService {
     private readonly marcaEquipoRepository: Repository<MarcaEquipo>,
   ) {}
 
-  async create(createMarcaEquipoDto: CreateMarcaEquipoDto) {
+  async create(createDto: CreateMarcaEquipoDto) {
     try {
       const existente = await this.marcaEquipoRepository.findOneBy({
-        nombre: createMarcaEquipoDto.nombre,
+        nombre: createDto.nombre,
       });
 
       if (existente) {
-        throw new ConflictException(
-          'Ya existe una marca con ese nombre',
-        );
+        throw new ConflictException('Ya existe una marca de equipo con ese nombre');
       }
 
-
-      const marcaEquipo = this.marcaEquipoRepository.create( createMarcaEquipoDto );
-      await this.marcaEquipoRepository.save( marcaEquipo );
-
-      return 'Marca registrada correctamente.';
-
+      const marca = this.marcaEquipoRepository.create(createDto);
+      return await this.marcaEquipoRepository.save(marca);
     } catch (err) {
       ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
     }
   }
 
-  findAll() {
-    return `This action returns all marcaEquipo`;
+  async findAll(paginationDto: PaginationDto) {
+    try {
+      const { limit = 50, offset = 0 } = paginationDto;
+      return await this.marcaEquipoRepository.find({ take: limit, skip: offset });
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} marcaEquipo`;
+  async findByTerm(term: string) {
+    let marcas: MarcaEquipo | MarcaEquipo[] | null;
+
+    try {
+      if (isUUID(term)) {
+        marcas = await this.marcaEquipoRepository.findOne({ where: { id: term } });
+      } else {
+        marcas = await this.marcaEquipoRepository.createQueryBuilder('marca')
+          .where('marca.nombre ILIKE :term', { term: `%${term}%` })
+          .getMany();
+      }
+
+      if (!marcas || (Array.isArray(marcas) && marcas.length === 0)) {
+        throw new NotFoundException('No se encontró ninguna marca de equipo');
+      }
+
+      return marcas;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
+    }
   }
 
-  update(id: number, updateMarcaEquipoDto: UpdateMarcaEquipoDto) {
-    return `This action updates a #${id} marcaEquipo`;
+  async update(id: string, updateDto: UpdateMarcaEquipoDto) {
+    try {
+      const marca = await this.marcaEquipoRepository.preload({ id, ...updateDto });
+      if (!marca) throw new NotFoundException(`No se encontró la marca con ID ${id}`);
+      return await this.marcaEquipoRepository.save(marca);
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} marcaEquipo`;
+  async remove(id: string) {
+    try {
+      const marca = await this.marcaEquipoRepository.findOneBy({ id });
+      if (!marca) throw new NotFoundException(`No se encontró la marca con ID ${id}`);
+      await this.marcaEquipoRepository.remove(marca);
+      return `Marca de equipo con ID ${id} eliminada correctamente`;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Marca-Equipo');
+    }
   }
 }

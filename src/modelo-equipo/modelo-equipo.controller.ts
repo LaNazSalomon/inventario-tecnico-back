@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { ModeloEquipoService } from './modelo-equipo.service';
 import { CreateModeloEquipoDto } from './dto/create-modelo-equipo.dto';
 import { UpdateModeloEquipoDto } from './dto/update-modelo-equipo.dto';
@@ -8,8 +8,8 @@ export class ModeloEquipoController {
   constructor(private readonly modeloEquipoService: ModeloEquipoService) {}
 
   @Post()
-  create(@Body() createModeloEquipoDto: CreateModeloEquipoDto) {
-    return this.modeloEquipoService.create(createModeloEquipoDto);
+  create(@Body() createDto: CreateModeloEquipoDto) {
+    return this.modeloEquipoService.create(createDto);
   }
 
   @Get()
@@ -17,18 +17,18 @@ export class ModeloEquipoController {
     return this.modeloEquipoService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.modeloEquipoService.findOne(+id);
+  @Get('search/:term')
+  findByTerm(@Param('term') term: string) {
+    return this.modeloEquipoService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModeloEquipoDto: UpdateModeloEquipoDto) {
-    return this.modeloEquipoService.update(+id, updateModeloEquipoDto);
+  update(@Param('id') id: string, @Body() updateDto: UpdateModeloEquipoDto) {
+    return this.modeloEquipoService.update(id, updateDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.modeloEquipoService.remove(+id);
+    return this.modeloEquipoService.remove(id);
   }
 }
