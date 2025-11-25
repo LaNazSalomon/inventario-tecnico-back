@@ -1,6 +1,8 @@
 import { 
-  IsNotEmpty, IsString, IsInt, IsUUID, IsNumber, IsOptional, IsDateString 
+  IsNotEmpty, IsString, IsInt, IsUUID, IsNumber, IsOptional, IsDateString, 
+  IsEnum
 } from "class-validator";
+import { Arquitectura } from "../enums/arquitectura.enum";
 
 export class CreateEquiposComputoDto {
   @IsInt({ message: 'El inventario debe ser un número entero' })
@@ -65,8 +67,10 @@ export class CreateEquiposComputoDto {
   @IsUUID('4', { message: 'La versión del SO debe ser un UUID válido' })
   versionSOId: string;
 
-  @IsUUID('4', { message: 'La arquitectura del SO debe ser un UUID válido' })
-  arquitecturaSOId: string;
+  @IsEnum(Arquitectura, {
+    message: 'La arquitectura del SO no es válida',
+  })
+  arquitecturaSO: Arquitectura;
 
   @IsUUID('4', { message: 'El estado de licenciamiento debe ser un UUID válido' })
   estadoLicenciamientoId: string;

@@ -16,14 +16,14 @@ import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesad
 import { TipoVelocidad } from 'src/tipo-velocidad/entities/tipo-velocidad.entity';
 import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
 import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-red.entity';
-import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
-import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
 import { EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
 import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { TamanoPantalla } from 'src/pantalla/entities/tamano-pantalla.entity';
 import { ResolucionPantalla } from 'src/pantalla/entities/resolucion-pantalla.entity';
 import { TipoPantalla } from 'src/pantalla/entities/tipo-pantalla.entity';
+import { SistemaOperativo } from '../enums/sistema-operativo.enum';
+import { Arquitectura } from '../enums/arquitectura.enum';
 
 @Entity('equipo-computo')
 export class EquiposComputo {
@@ -91,17 +91,23 @@ export class EquiposComputo {
   @Column('text')
   capacidadAlmacenamiento: string;
 
-  @ManyToOne(() => SistemaOperativo)
-  @JoinColumn({ name: 'sistema_operativo_id' })
+  @Column({
+    type: 'enum',
+    enum: SistemaOperativo,
+    name: 'sistema_operativo'
+  })
   sistemaOperativo: SistemaOperativo;
 
   @ManyToOne(() => VersionSO)
   @JoinColumn({ name: 'version_so_id' })
   versionSO: VersionSO;
 
-  @ManyToOne(() => ArquitecturaSO)
-  @JoinColumn({ name: 'arquitectura_so_id' })
-  arquitecturaSO: ArquitecturaSO;
+  @Column({
+    type: 'enum',
+    enum: Arquitectura,
+    name: 'arquitectura_so'
+  })
+  arquitecturaSO: Arquitectura;
 
   @ManyToOne(() => EstadoLicenciamiento)
   @JoinColumn({ name: 'estado_licenciamiento_id' })
