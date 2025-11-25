@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { TipoConexionRedService } from './tipo-conexion-red.service';
 import { CreateTipoConexionRedDto } from './dto/create-tipo-conexion-red.dto';
 import { UpdateTipoConexionRedDto } from './dto/update-tipo-conexion-red.dto';
@@ -17,18 +17,18 @@ export class TipoConexionRedController {
     return this.tipoConexionRedService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tipoConexionRedService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.tipoConexionRedService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTipoConexionRedDto: UpdateTipoConexionRedDto) {
-    return this.tipoConexionRedService.update(+id, updateTipoConexionRedDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTipoConexionRedDto: UpdateTipoConexionRedDto) {
+    return this.tipoConexionRedService.update(id, updateTipoConexionRedDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tipoConexionRedService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tipoConexionRedService.remove(id);
   }
 }

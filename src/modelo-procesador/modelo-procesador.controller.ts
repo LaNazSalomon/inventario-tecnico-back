@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { ModeloProcesadorService } from './modelo-procesador.service';
 import { CreateModeloProcesadorDto } from './dto/create-modelo-procesador.dto';
 import { UpdateModeloProcesadorDto } from './dto/update-modelo-procesador.dto';
@@ -17,18 +17,21 @@ export class ModeloProcesadorController {
     return this.modeloProcesadorService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.modeloProcesadorService.findOne(+id);
+  @Get(':term')
+  findByTerm(@Param('term') term: string) {
+    return this.modeloProcesadorService.findByTerm(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModeloProcesadorDto: UpdateModeloProcesadorDto) {
-    return this.modeloProcesadorService.update(+id, updateModeloProcesadorDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateModeloProcesadorDto: UpdateModeloProcesadorDto,
+  ) {
+    return this.modeloProcesadorService.update(id, updateModeloProcesadorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.modeloProcesadorService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.modeloProcesadorService.remove(id);
   }
 }
