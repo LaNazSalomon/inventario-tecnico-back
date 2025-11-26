@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EstadoFuncionamiento } from './entities/estado-funcionamiento.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ EstadoFuncionamiento ])],
+  imports: [TypeOrmModule.forFeature([EstadoFuncionamiento])],
   controllers: [EstadoFuncionamientoController],
   providers: [EstadoFuncionamientoService],
   exports: [TypeOrmModule],
