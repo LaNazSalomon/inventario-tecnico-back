@@ -3,7 +3,6 @@ import { CreateVersionSoDto } from './dto/create-version-so.dto';
 import { UpdateVersionSoDto } from './dto/update-version-so.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VersionSO } from './entities/version-so.entity';
-import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
 import { Repository } from 'typeorm';
 import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
@@ -14,23 +13,12 @@ export class VersionSoService {
   constructor(
     @InjectRepository(VersionSO)
     private readonly versionSoRepository: Repository<VersionSO>,
-    @InjectRepository(SistemaOperativo)
-    private readonly sistemaOperativoRepository: Repository<SistemaOperativo>,
   ) {}
 
   async create(createVersionSoDto: CreateVersionSoDto) {
     try {
-      const sistemaOperativo = await this.sistemaOperativoRepository.findOneBy({
-        id: createVersionSoDto.sistemaOperativoId,
-      });
-
-      if (!sistemaOperativo) {
-        throw new NotFoundException('Sistema operativo no encontrado');
-      }
-
       const versionSoDB = this.versionSoRepository.create({
         version: createVersionSoDto.version,
-        sistemaOperativo,
       });
 
       await this.versionSoRepository.save(versionSoDB);
@@ -96,21 +84,6 @@ export class VersionSoService {
 
       if (!versionSo) {
         throw new NotFoundException(`No se encontró la versión con ID ${id}`);
-      }
-
-      if (updateVersionSoDto.sistemaOperativoId) {
-        const sistemaOperativo =
-          await this.sistemaOperativoRepository.findOneBy({
-            id: updateVersionSoDto.sistemaOperativoId,
-          });
-
-        if (!sistemaOperativo) {
-          throw new NotFoundException(
-            `Sistema operativo con ID ${updateVersionSoDto.sistemaOperativoId} no encontrado`,
-          );
-        }
-
-        versionSo.sistemaOperativo = sistemaOperativo;
       }
 
       return await this.versionSoRepository.save(versionSo);
