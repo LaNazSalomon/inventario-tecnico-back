@@ -14,12 +14,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from 'src/users/dto/login.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from './decorators/auth.decorator';
+import { Roles } from 'src/common/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+
   @Post()
+  @Auth( Roles.Admin )
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }

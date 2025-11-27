@@ -1,4 +1,4 @@
-import { Role } from 'src/common/enums/role.enum';
+import { Roles } from 'src/common/enums/role.enum';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { Puesto } from 'src/puesto/entities/puesto.entity';
 import {
@@ -13,7 +13,7 @@ import {
 //TODO: Poner la eliminacion en cascada en todas las partes
 
 
-@Entity('Users')
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   idEmpleado: string;
@@ -26,10 +26,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: Role,
-    default: Role.User,
+    enum: Roles,
+    default: Roles.User,
   })
-  rol: Role;
+  rol: Roles;
 
   @Column('integer', {
     unique: true,

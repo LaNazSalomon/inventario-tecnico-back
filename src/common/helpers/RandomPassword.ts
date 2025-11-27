@@ -17,9 +17,9 @@ export class RandomPassword {
 
     do {
       contrasena = generatePassword.generate({
-        length: longitud,
+       length: longitud,
         numbers: true,
-        symbols: '!@#$%^&*()-_=+[]{}<>?/|',
+        symbols: true,
         uppercase: true,
         lowercase: true,
         excludeSimilarCharacters: true,

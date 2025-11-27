@@ -8,6 +8,7 @@ import { PuestoModule } from 'src/puesto/puesto.module';
 import { EmailsModule } from 'src/emails/emails.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, JwtStrategy],
   exports: [TypeOrmModule],
 })
 export class UsersModule {}

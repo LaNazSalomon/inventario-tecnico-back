@@ -25,14 +25,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .select(['user.idEmpleado', 'user.rol'])
+      .select(['user.idEmpleado', 'user.rol', 'user.nombreEmpleado'])
       .where('user.idEmpleado = :id', {
         id,
       })
       .getOne();
 
-      if( !user ) throw new UnauthorizedException( 'Token no valido' );
+    if (!user) throw new UnauthorizedException('Token no valido');
 
-      return user;
+    return user;
   }
 }

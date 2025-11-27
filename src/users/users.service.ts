@@ -228,7 +228,7 @@ export class UsersService {
 
     const userInDB = await this.userRepository.findOne({
       where: { numeroEmpleado },
-      select: { idEmpleado: true, numeroEmpleado: true, password: true, rol: true },
+      select: { idEmpleado: true, nombreEmpleado: true, numeroEmpleado: true, password: true, rol: true },
     });
 
     if (!userInDB) {
