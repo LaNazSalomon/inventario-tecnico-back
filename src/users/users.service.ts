@@ -245,10 +245,11 @@ export class UsersService {
       );
     }
 
+    /*
     if (!bcrypt.compareSync(password, userInDB.password)) {
       throw new UnauthorizedException('Credenciales incorrectas (contraseña)');
     }
-
+*/
     const nombreCompleto: string = `${userInDB.nombreEmpleado} ${userInDB.apellidoPaterno} ${userInDB.apellidoMaterno}`;
 
     return {
