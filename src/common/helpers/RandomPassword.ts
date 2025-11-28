@@ -17,24 +17,24 @@ export class RandomPassword {
 
     do {
       contrasena = generatePassword.generate({
-       length: longitud,
+        length: longitud,
         numbers: true,
         symbols: true,
         uppercase: true,
         lowercase: true,
-        excludeSimilarCharacters: true,
+        strict: true,
       });
-    } while (!this.cumpleReglas(contrasena));
+    } while (!this.cumpleReglas(contrasena, longitud));
 
     return contrasena;
   }
 
-  public static cumpleReglas(password: string): boolean {
+  public static cumpleReglas(password: string, longPassword: number): boolean {
     const tieneMayuscula = /[A-Z]/.test(password);
     const tieneMinuscula = /[a-z]/.test(password);
     const tieneNumero = /[0-9]/.test(password);
     const tieneSimbolo = /[!@#$%^&*()\-_=\+[\]{}<>?/|]/.test(password);
-    const longitudMinima = password.length >= 8;
+    const longitudMinima = password.length >= longPassword;
 
     return (
       tieneMayuscula &&
