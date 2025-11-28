@@ -25,6 +25,7 @@ import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funci
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
+      ssl: process.env.STAGE === 'prod' ? true : false,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT!,

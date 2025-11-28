@@ -223,76 +223,117 @@ export class EquiposComputoService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    try {
-      const { limit = 50, offset = 0 } = paginationDto;
+  try {
+    const { limit = 50, offset = 0 } = paginationDto;
+    return await this.equiposRepository.find({
+      take: limit,
+      skip: offset,
+      relations: [
+        'tipoEquipo',
+        'marca',
+        'modelo',
+        'tipoProcesador',
+        'modeloProcesador',
+        'versionSO',
+        'estadoFuncionamiento',
+        'pantallaPulgadas',
+        'pantallaResolucion',
+        'pantallaTipo',
+        'tipoAlmacenamientoExtraible',
+        'empleadoAsignado',
+        'unidadAcademica',
+        'departamentoArea',
+      ],
+    });
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+  }}
+  
 
-      return await this.equiposRepository.find({
-        take: limit,
-        skip: offset,
-        relations: [
-          'tipoEquipo',
-          'marca',
-          'modelo',
-          'tipoProcesador',
-          'modeloProcesador',
-          'versionSO',
-          'estadoFuncionamiento',
-          'pantallaPulgadas',
-          'pantallaResolucion',
-          'pantallaTipo',
-          'tipoAlmacenamientoExtraible',
-          'empleadoAsignado',
-          'unidadAcademica',
-          'departamentoArea',
-        ],
+async findByTerm(term: string) {
+  let equipos: EquiposComputo | EquiposComputo[] | null;
+
+  try {
+    const relations = [
+      'tipoEquipo',
+      'marca',
+      'modelo',
+      'tipoProcesador',
+      'modeloProcesador',
+      'versionSO',
+      'estadoFuncionamiento',
+      'pantallaPulgadas',
+      'pantallaResolucion',
+      'pantallaTipo',
+      'tipoAlmacenamientoExtraible',
+      'empleadoAsignado',
+      'unidadAcademica',
+      'departamentoArea',
+    ];
+
+    if (isUUID(term)) {
+      equipos = await this.equiposRepository.findOne({
+        where: { id: term },
+        relations: relations,
       });
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    } else {
+      equipos = await this.equiposRepository
+        .createQueryBuilder('equipo')
+        .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
+        .leftJoinAndSelect('equipo.marca', 'marca')
+        .leftJoinAndSelect('equipo.modelo', 'modelo')
+        .leftJoinAndSelect('equipo.tipoProcesador', 'tipoProcesador')
+        .leftJoinAndSelect('equipo.modeloProcesador', 'modeloProcesador')
+        .leftJoinAndSelect('equipo.versionSO', 'versionSO')
+        .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estadoFuncionamiento')
+        .leftJoinAndSelect('equipo.pantallaPulgadas', 'pantallaPulgadas')
+        .leftJoinAndSelect('equipo.pantallaResolucion', 'pantallaResolucion')
+        .leftJoinAndSelect('equipo.pantallaTipo', 'pantallaTipo')
+        .leftJoinAndSelect('equipo.tipoAlmacenamientoExtraible', 'tipoAlmacenamientoExtraible')
+        .leftJoinAndSelect('equipo.empleadoAsignado', 'empleadoAsignado')
+        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
+        .where(
+          'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
+          { term: `%${term}%` },
+        )
+        .getMany();
     }
-  }
 
-  async findByTerm(term: string) {
-    let equipos: EquiposComputo | EquiposComputo[] | null;
-
-    try {
-      if (isUUID(term)) {
-        equipos = await this.equiposRepository.findOne({
-          where: { id: term },
-          relations: ['tipoEquipo', 'marca', 'modelo'],
-        });
-      } else {
-        equipos = await this.equiposRepository
-          .createQueryBuilder('equipo')
-          .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
-          .leftJoinAndSelect('equipo.marca', 'marca')
-          .leftJoinAndSelect('equipo.modelo', 'modelo')
-          .where(
-            'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
-            { term: `%${term}%` },
-          )
-          .getMany();
-      }
-
-      if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
-        throw new NotFoundException('No se encontró ningún equipo de cómputo');
-      }
-
-      return equipos;
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
+      throw new NotFoundException('No se encontró ningún equipo de cómputo');
     }
-  }
 
-  async update(id: string, updateDto: UpdateEquiposComputoDto) {
-    try {
-      const equipo = await this.equiposRepository.preload({ id, ...updateDto });
-      if (!equipo)
-        throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
-      return await this.equiposRepository.save(equipo);
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
-    }
+    return equipos;
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
   }
+}
+
+async update(id: string, updateDto: UpdateEquiposComputoDto) {
+  try {
+    const equipo = await this.equiposRepository.preload({ id, ...updateDto });
+    if (!equipo)
+      throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
+    
+    await this.equiposRepository.save(equipo);
+    
+    // Cargar y retornar con relaciones
+    const relaciones = [
+      'tipoEquipo', 'marca', 'modelo', 'tipoProcesador', 'modeloProcesador',
+      'versionSO', 'estadoFuncionamiento', 'pantallaPulgadas', 'pantallaResolucion',
+      'pantallaTipo', 'tipoAlmacenamientoExtraible', 'empleadoAsignado',
+      'unidadAcademica', 'departamentoArea',
+    ];
+    
+    return await this.equiposRepository.findOne({
+      where: { id },
+      relations: relaciones,
+    });
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+  }
+}
 
   async remove(id: string) {
     try {
