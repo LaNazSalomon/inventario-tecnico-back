@@ -5,8 +5,10 @@ import { CreateTipoPantallaDto } from './dto/create-tipo-pantalla.dto';
 import { UpdateTipoPantallaDto } from './dto/update-tipo-pantalla.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { TipoPantallaService } from './tipo-pantalla.service';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('tipo-pantalla')
+@Auth()
 export class TipoPantallaController {
   constructor(private readonly tipoPantallaService: TipoPantallaService) {}
 

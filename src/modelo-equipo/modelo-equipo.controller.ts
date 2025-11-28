@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/commo
 import { ModeloEquipoService } from './modelo-equipo.service';
 import { CreateModeloEquipoDto } from './dto/create-modelo-equipo.dto';
 import { UpdateModeloEquipoDto } from './dto/update-modelo-equipo.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('modelo-equipo')
+@Auth()
 export class ModeloEquipoController {
   constructor(private readonly modeloEquipoService: ModeloEquipoService) {}
 

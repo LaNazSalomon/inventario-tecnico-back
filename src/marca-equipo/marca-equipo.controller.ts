@@ -3,8 +3,10 @@ import { MarcaEquipoService } from './marca-equipo.service';
 import { CreateMarcaEquipoDto } from './dto/create-marca-equipo.dto';
 import { UpdateMarcaEquipoDto } from './dto/update-marca-equipo.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('marca-equipo')
+@Auth()
 export class MarcaEquipoController {
   constructor(private readonly marcaEquipoService: MarcaEquipoService) {}
 

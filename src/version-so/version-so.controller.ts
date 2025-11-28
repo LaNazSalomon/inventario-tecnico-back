@@ -13,8 +13,10 @@ import { VersionSoService } from './version-so.service';
 import { CreateVersionSoDto } from './dto/create-version-so.dto';
 import { UpdateVersionSoDto } from './dto/update-version-so.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('version-so')
+@Auth()
 export class VersionSoController {
   constructor(private readonly versionSoService: VersionSoService) {}
 

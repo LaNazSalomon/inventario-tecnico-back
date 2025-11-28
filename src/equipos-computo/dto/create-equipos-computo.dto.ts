@@ -15,9 +15,8 @@ import { EstadoLicencia } from '../enums/estado-licencia.enum';
 import { SistemaOperativo } from '../enums/sistema-operativo.enum';
 
 export class CreateEquiposComputoDto {
-  @IsInt({ message: 'El inventario debe ser un número entero' })
   @IsNotEmpty({ message: 'El inventario no puede estar vacío' })
-  inventario: number;
+  inventario: string;
 
   @IsString({ message: 'El nombre del equipo tiene que ser texto' })
   @IsNotEmpty({ message: 'El nombre del equipo no puede estar vacío' })

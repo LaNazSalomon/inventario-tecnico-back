@@ -228,7 +228,15 @@ export class UsersService {
 
     const userInDB = await this.userRepository.findOne({
       where: { numeroEmpleado },
-      select: { idEmpleado: true, nombreEmpleado: true, numeroEmpleado: true, password: true, rol: true },
+      select: {
+        idEmpleado: true,
+        nombreEmpleado: true,
+        apellidoMaterno: true,
+        apellidoPaterno: true,
+        numeroEmpleado: true,
+        password: true,
+        rol: true,
+      },
     });
 
     if (!userInDB) {
@@ -241,9 +249,12 @@ export class UsersService {
       throw new UnauthorizedException('Credenciales incorrectas (contraseña)');
     }
 
+    const nombreCompleto: string = `${userInDB.nombreEmpleado} ${userInDB.apellidoPaterno} ${userInDB.apellidoMaterno}`;
+
     return {
       numeroEmpleado: userInDB.numeroEmpleado,
       idEmpleado: userInDB.idEmpleado,
+      nombre: nombreCompleto,
       rol: userInDB.rol,
       token: this.getJwtToken({ id: userInDB.idEmpleado }),
     };

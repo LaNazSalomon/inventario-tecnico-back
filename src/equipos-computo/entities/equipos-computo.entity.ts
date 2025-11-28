@@ -30,8 +30,8 @@ export class EquiposComputo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('int')
-  inventario: number;
+  @Column('text')
+  inventario: string;
 
   @Column('text')
   nombreEquipo: string;
@@ -173,7 +173,7 @@ export class EquiposComputo {
   @JoinColumn({ name: 'tipo_almacenamiento_extraible_id' })
   tipoAlmacenamientoExtraible: TipoAlmacenamientoExtraible;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   fechaVencimientoGarantia: Date;
 
   @Column({ nullable: true })

@@ -29,16 +29,19 @@ export class UsersController {
   }
 
   @Get()
+  @Auth()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usersService.findAll(paginationDto);
   }
 
   @Get(':term')
+  @Auth( Roles.Admin )
   findByTerm(@Param('term') term: string) {
     return this.usersService.findByTerm(term);
   }
 
   @Patch(':id')
+  @Auth( Roles.Admin )
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -47,6 +50,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Auth( Roles.Admin )
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }

@@ -3,8 +3,10 @@ import { DepartamentoService } from './departamento.service';
 import { CreateDepartamentoDto } from './dto/create-departamento.dto';
 import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from '../users/decorators/auth.decorator';
 
 @Controller('departamento')
+@Auth()
 export class DepartamentoController {
   constructor(private readonly departamentoService: DepartamentoService) {}
 

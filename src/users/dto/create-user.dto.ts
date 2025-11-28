@@ -6,7 +6,7 @@ export class CreateUserDto {
   numeroEmpleado: number;
 
   @IsOptional()
-  @IsEnum(Roles, { message: 'Solo pueden ser los roles existentes (admin, user).' })
+  @IsEnum(Roles, { message: 'Solo pueden ser los roles existentes (admin, usuario).' })
   rol?: Roles;
 
   @IsString({ message: 'Se esperaba texto en el campo nombre.' })

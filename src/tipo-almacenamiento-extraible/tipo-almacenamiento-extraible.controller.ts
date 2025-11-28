@@ -3,8 +3,10 @@ import { TipoAlmacenamientoExtraibleService } from './tipo-almacenamiento-extrai
 import { CreateTipoAlmacenamientoExtraibleDto } from './dto/create-tipo-almacenamiento-extraible.dto';
 import { UpdateTipoAlmacenamientoExtraibleDto } from './dto/update-tipo-almacenamiento-extraible.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('tipo-almacenamiento-extraible')
+@Auth()
 export class TipoAlmacenamientoExtraibleController {
   constructor(private readonly tipoAlmacenamientoExtraibleService: TipoAlmacenamientoExtraibleService) {}
 

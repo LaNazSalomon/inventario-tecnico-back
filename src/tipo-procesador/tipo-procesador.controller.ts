@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { TipoProcesadorService } from './tipo-procesador.service';
 import { CreateTipoProcesadorDto } from './dto/create-tipo-procesador.dto';
 import { UpdateTipoProcesadorDto } from './dto/update-tipo-procesador.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('tipo-procesador')
+@Auth()
 export class TipoProcesadorController {
   constructor(private readonly tipoProcesadorService: TipoProcesadorService) {}
 

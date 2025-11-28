@@ -3,8 +3,10 @@ import { UnidadAcademicaService } from './unidad-academica.service';
 import { CreateUnidadAcademicaDto } from './dto/create-unidad-academica.dto';
 import { UpdateUnidadAcademicaDto } from './dto/update-unidad-academica.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('unidad-academica')
+@Auth()
 export class UnidadAcademicaController {
   constructor(private readonly unidadAcademicaService: UnidadAcademicaService) {}
 

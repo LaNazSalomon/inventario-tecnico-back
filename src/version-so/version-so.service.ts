@@ -35,7 +35,6 @@ export class VersionSoService {
       return await this.versionSoRepository.find({
         take: limit,
         skip: offset,
-        relations: ['sistemaOperativo'],
       });
     } catch (err) {
       ManejadorErroresDB.erroresDB(err, 'VersionSO');

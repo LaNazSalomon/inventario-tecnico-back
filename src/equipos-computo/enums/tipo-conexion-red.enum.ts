@@ -1,6 +1,6 @@
 export enum TipoConexionRed {
   ETHERNET = "Cable Ethernet",       // Conexión física por cable
-  WIFI = "Wi‑Fi",                    // Conexión inalámbrica
+  WIFI = "WiFi",                    // Conexión inalámbrica
   DATOS_MOVILES = "Datos móviles",   // Conexión celular (3G, 4G, 5G)
   BLUETOOTH = "Bluetooth",           // Conexión inalámbrica de corto alcance
   VPN = "VPN",                       // Conexión privada virtual

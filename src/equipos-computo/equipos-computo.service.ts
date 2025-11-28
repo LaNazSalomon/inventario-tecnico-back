@@ -225,6 +225,7 @@ export class EquiposComputoService {
   async findAll(paginationDto: PaginationDto) {
     try {
       const { limit = 50, offset = 0 } = paginationDto;
+
       return await this.equiposRepository.find({
         take: limit,
         skip: offset,
@@ -232,14 +233,9 @@ export class EquiposComputoService {
           'tipoEquipo',
           'marca',
           'modelo',
-          'tipoConexionRed',
           'tipoProcesador',
           'modeloProcesador',
-          'tipoVelocidad',
-          'sistemaOperativo',
           'versionSO',
-          'arquitecturaSO',
-          'estadoLicenciamiento',
           'estadoFuncionamiento',
           'pantallaPulgadas',
           'pantallaResolucion',

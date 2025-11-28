@@ -13,8 +13,10 @@ import { EstadoFuncionamientoService } from './estado-funcionamiento.service';
 import { CreateEstadoFuncionamientoDto } from './dto/create-estado-funcionamiento.dto';
 import { UpdateEstadoFuncionamientoDto } from './dto/update-estado-funcionamiento.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('estado-funcionamiento')
+@Auth()
 export class EstadoFuncionamientoController {
   constructor(
     private readonly estadoFuncionamientoService: EstadoFuncionamientoService,
