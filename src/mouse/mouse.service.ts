@@ -5,9 +5,9 @@ import { Mouse } from './entities/mouse.entity';
 import { CreateMouseDto } from './dto/create-mouse.dto';
 import { UpdateMouseDto } from './dto/update-mouse.dto';
 import { User } from 'src/users/entities/user.entity';
-import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { isUUID } from 'class-validator';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 
 @Injectable()
 export class MouseService {

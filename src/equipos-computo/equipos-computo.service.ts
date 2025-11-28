@@ -7,25 +7,22 @@ import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 import { UpdateEquiposComputoDto } from './dto/update-equipos-computo.dto';
 import { EquiposComputo } from './entities/equipos-computo.entity';
 import { CreateEquiposComputoDto } from './dto/create-equipos-computo.dto';
-import { ArquitecturaSO } from 'src/arquitectura-so/entities/arquitectura-so.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
-import { EstadoLicenciamiento } from 'src/estado-licenciamiento/entities/estado-licenciamiento.entity';
-import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
 import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
 import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
 import { ResolucionPantalla } from 'src/pantalla/entities/resolucion-pantalla.entity';
 import { TamanoPantalla } from 'src/pantalla/entities/tamano-pantalla.entity';
 import { TipoPantalla } from 'src/pantalla/entities/tipo-pantalla.entity';
-import { SistemaOperativo } from 'src/sistema-operativo/entities/sistema-operativo.entity';
 import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
-import { TipoConexionRed } from 'src/tipo-conexion-red/entities/tipo-conexion-red.entity';
 import { TipoEquipo } from 'src/tipo-equipo/entities/tipo-equipo.entity';
 import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
-import { TipoVelocidad } from 'src/tipo-velocidad/entities/tipo-velocidad.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 import { User } from 'src/users/entities/user.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
+import { TipoConexionRed } from './enums/tipo-conexion-red.enum';
+import { TipoVelocidad } from './enums/tipo-velocidad-procesador.enum';
 
 @Injectable()
 export class EquiposComputoService {
@@ -42,29 +39,14 @@ export class EquiposComputoService {
     @InjectRepository(ModeloEquipo)
     private readonly modeloRepository: Repository<ModeloEquipo>,
 
-    @InjectRepository(TipoConexionRed)
-    private readonly tipoConexionRedRepository: Repository<TipoConexionRed>,
-
     @InjectRepository(TipoProcesador)
     private readonly tipoProcesadorRepository: Repository<TipoProcesador>,
 
     @InjectRepository(ModeloProcesador)
     private readonly modeloProcesadorRepository: Repository<ModeloProcesador>,
 
-    @InjectRepository(TipoVelocidad)
-    private readonly tipoVelocidadRepository: Repository<TipoVelocidad>,
-
-    @InjectRepository(SistemaOperativo)
-    private readonly sistemaOperativoRepository: Repository<SistemaOperativo>,
-
     @InjectRepository(VersionSO)
     private readonly versionSORepository: Repository<VersionSO>,
-
-    @InjectRepository(ArquitecturaSO)
-    private readonly arquitecturaSORepository: Repository<ArquitecturaSO>,
-
-    @InjectRepository(EstadoLicenciamiento)
-    private readonly estadoLicenciamientoRepository: Repository<EstadoLicenciamiento>,
 
     @InjectRepository(EstadoFuncionamiento)
     private readonly estadoFuncionamientoRepository: Repository<EstadoFuncionamiento>,
@@ -103,31 +85,18 @@ export class EquiposComputoService {
       const modelo = await this.modeloRepository.findOneBy({
         id: createEquiposDto.modeloId,
       });
-      const tipoConexionRed = await this.tipoConexionRedRepository.findOneBy({
-        id: createEquiposDto.tipoConexionRedId,
-      });
+
       const tipoProcesador = await this.tipoProcesadorRepository.findOneBy({
         id: createEquiposDto.tipoProcesadorId,
       });
       const modeloProcesador = await this.modeloProcesadorRepository.findOneBy({
         id: createEquiposDto.modeloProcesadorId,
       });
-      const tipoVelocidad = await this.tipoVelocidadRepository.findOneBy({
-        id: createEquiposDto.tipoVelocidadId,
-      });
-      const sistemaOperativo = await this.sistemaOperativoRepository.findOneBy({
-        id: createEquiposDto.sistemaOperativoId,
-      });
+
       const versionSO = await this.versionSORepository.findOneBy({
         id: createEquiposDto.versionSOId,
       });
-      const arquitecturaSO = await this.arquitecturaSORepository.findOneBy({
-        id: createEquiposDto.arquitecturaSOId,
-      });
-      const estadoLicenciamiento =
-        await this.estadoLicenciamientoRepository.findOneBy({
-          id: createEquiposDto.estadoLicenciamientoId,
-        });
+
       const estadoFuncionamiento =
         await this.estadoFuncionamientoRepository.findOneBy({
           id: createEquiposDto.estadoFuncionamientoId,
@@ -162,22 +131,14 @@ export class EquiposComputoService {
       if (!marca) throw new NotFoundException('Marca no encontrada');
       if (!modelo) throw new NotFoundException('Modelo no encontrado');
 
-      if (!tipoConexionRed)
-        throw new NotFoundException('Tipo de conexión de red no encontrado');
       if (!tipoProcesador)
         throw new NotFoundException('Tipo de procesador no encontrado');
       if (!modeloProcesador)
         throw new NotFoundException('Modelo de procesador no encontrado');
-      if (!tipoVelocidad)
-        throw new NotFoundException('Tipo de velocidad no encontrado');
-      if (!sistemaOperativo)
-        throw new NotFoundException('Sistema operativo no encontrado');
+
       if (!versionSO)
         throw new NotFoundException('Versión de SO no encontrada');
-      if (!arquitecturaSO)
-        throw new NotFoundException('Arquitectura de SO no encontrada');
-      if (!estadoLicenciamiento)
-        throw new NotFoundException('Estado de licenciamiento no encontrado');
+
       if (!estadoFuncionamiento)
         throw new NotFoundException('Estado de funcionamiento no encontrado');
       if (!pantallaPulgadas)
@@ -232,19 +193,19 @@ export class EquiposComputoService {
         cantidadPuertosParalelo: createEquiposDto.cantidadPuertosParalelo,
         cantidadPuertosDisplayPort: createEquiposDto.cantidadPuertosDisplayPort,
         cantidadPuertoSerialCom1: createEquiposDto.cantidadPuertoSerialCom1,
+        tipoConexionRed: createEquiposDto.tipoConexionRed,
+        tipoVelocidad: createEquiposDto.tipoVelocidad,
+        sistemaOperativo: createEquiposDto.sistemaOperativo,
+        arquitecturaSO: createEquiposDto.arquitecturaSO,
+        estadoLicencia: createEquiposDto.estadoLicencia,
 
         // Relaciones
         tipoEquipo: tipoEquipo,
         marca: marca,
         modelo: modelo,
-        tipoConexionRed: tipoConexionRed,
         tipoProcesador: tipoProcesador,
         modeloProcesador: modeloProcesador,
-        tipoVelocidad: tipoVelocidad,
-        sistemaOperativo: sistemaOperativo,
         versionSO: versionSO,
-        arquitecturaSO: arquitecturaSO,
-        estadoLicenciamiento: estadoLicenciamiento,
         estadoFuncionamiento: estadoFuncionamiento,
         pantallaPulgadas: pantallaPulgadas,
         pantallaResolucion: pantallaResolucion,
@@ -262,80 +223,117 @@ export class EquiposComputoService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    try {
-      const { limit = 50, offset = 0 } = paginationDto;
-      return await this.equiposRepository.find({
-        take: limit,
-        skip: offset,
-        relations: [
-          'tipoEquipo',
-          'marca',
-          'modelo',
-          'tipoConexionRed',
-          'tipoProcesador',
-          'modeloProcesador',
-          'tipoVelocidad',
-          'sistemaOperativo',
-          'versionSO',
-          'arquitecturaSO',
-          'estadoLicenciamiento',
-          'estadoFuncionamiento',
-          'pantallaPulgadas',
-          'pantallaResolucion',
-          'pantallaTipo',
-          'tipoAlmacenamientoExtraible',
-          'empleadoAsignado',
-          'unidadAcademica',
-          'departamentoArea',
-        ],
+  try {
+    const { limit = 50, offset = 0 } = paginationDto;
+    return await this.equiposRepository.find({
+      take: limit,
+      skip: offset,
+      relations: [
+        'tipoEquipo',
+        'marca',
+        'modelo',
+        'tipoProcesador',
+        'modeloProcesador',
+        'versionSO',
+        'estadoFuncionamiento',
+        'pantallaPulgadas',
+        'pantallaResolucion',
+        'pantallaTipo',
+        'tipoAlmacenamientoExtraible',
+        'empleadoAsignado',
+        'unidadAcademica',
+        'departamentoArea',
+      ],
+    });
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+  }}
+  
+
+async findByTerm(term: string) {
+  let equipos: EquiposComputo | EquiposComputo[] | null;
+
+  try {
+    const relations = [
+      'tipoEquipo',
+      'marca',
+      'modelo',
+      'tipoProcesador',
+      'modeloProcesador',
+      'versionSO',
+      'estadoFuncionamiento',
+      'pantallaPulgadas',
+      'pantallaResolucion',
+      'pantallaTipo',
+      'tipoAlmacenamientoExtraible',
+      'empleadoAsignado',
+      'unidadAcademica',
+      'departamentoArea',
+    ];
+
+    if (isUUID(term)) {
+      equipos = await this.equiposRepository.findOne({
+        where: { id: term },
+        relations: relations,
       });
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    } else {
+      equipos = await this.equiposRepository
+        .createQueryBuilder('equipo')
+        .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
+        .leftJoinAndSelect('equipo.marca', 'marca')
+        .leftJoinAndSelect('equipo.modelo', 'modelo')
+        .leftJoinAndSelect('equipo.tipoProcesador', 'tipoProcesador')
+        .leftJoinAndSelect('equipo.modeloProcesador', 'modeloProcesador')
+        .leftJoinAndSelect('equipo.versionSO', 'versionSO')
+        .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estadoFuncionamiento')
+        .leftJoinAndSelect('equipo.pantallaPulgadas', 'pantallaPulgadas')
+        .leftJoinAndSelect('equipo.pantallaResolucion', 'pantallaResolucion')
+        .leftJoinAndSelect('equipo.pantallaTipo', 'pantallaTipo')
+        .leftJoinAndSelect('equipo.tipoAlmacenamientoExtraible', 'tipoAlmacenamientoExtraible')
+        .leftJoinAndSelect('equipo.empleadoAsignado', 'empleadoAsignado')
+        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
+        .where(
+          'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
+          { term: `%${term}%` },
+        )
+        .getMany();
     }
-  }
 
-  async findByTerm(term: string) {
-    let equipos: EquiposComputo | EquiposComputo[] | null;
-
-    try {
-      if (isUUID(term)) {
-        equipos = await this.equiposRepository.findOne({
-          where: { id: term },
-          relations: ['tipoEquipo', 'marca', 'modelo'],
-        });
-      } else {
-        equipos = await this.equiposRepository
-          .createQueryBuilder('equipo')
-          .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
-          .leftJoinAndSelect('equipo.marca', 'marca')
-          .leftJoinAndSelect('equipo.modelo', 'modelo')
-          .where(
-            'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
-            { term: `%${term}%` },
-          )
-          .getMany();
-      }
-
-      if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
-        throw new NotFoundException('No se encontró ningún equipo de cómputo');
-      }
-
-      return equipos;
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+    if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
+      throw new NotFoundException('No se encontró ningún equipo de cómputo');
     }
-  }
 
-  async update(id: string, updateDto: UpdateEquiposComputoDto) {
-    try {
-      const equipo = await this.equiposRepository.preload({ id, ...updateDto });
-      if (!equipo)
-        throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
-      return await this.equiposRepository.save(equipo);
-    } catch (err) {
-      ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
-    }
+    return equipos;
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
   }
+}
+
+async update(id: string, updateDto: UpdateEquiposComputoDto) {
+  try {
+    const equipo = await this.equiposRepository.preload({ id, ...updateDto });
+    if (!equipo)
+      throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
+    
+    await this.equiposRepository.save(equipo);
+    
+    // Cargar y retornar con relaciones
+    const relaciones = [
+      'tipoEquipo', 'marca', 'modelo', 'tipoProcesador', 'modeloProcesador',
+      'versionSO', 'estadoFuncionamiento', 'pantallaPulgadas', 'pantallaResolucion',
+      'pantallaTipo', 'tipoAlmacenamientoExtraible', 'empleadoAsignado',
+      'unidadAcademica', 'departamentoArea',
+    ];
+    
+    return await this.equiposRepository.findOne({
+      where: { id },
+      relations: relaciones,
+    });
+  } catch (err) {
+    ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
+  }
+}
 
   async remove(id: string) {
     try {

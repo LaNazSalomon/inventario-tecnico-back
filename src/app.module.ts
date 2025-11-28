@@ -13,23 +13,19 @@ import { ModeloEquipoModule } from './modelo-equipo/modelo-equipo.module';
 import { TipoEquipoModule } from './tipo-equipo/tipo-equipo.module';
 import { TipoProcesadorModule } from './tipo-procesador/tipo-procesador.module';
 import { ModeloProcesadorModule } from './modelo-procesador/modelo-procesador.module';
-import { TipoVelocidadModule } from './tipo-velocidad/tipo-velocidad.module';
 import { TipoAlmacenamientoExtraibleModule } from './tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
-import { TipoConexionRedModule } from './tipo-conexion-red/tipo-conexion-red.module';
-import { SistemaOperativoModule } from './sistema-operativo/sistema-operativo.module';
 import { VersionSoModule } from './version-so/version-so.module';
-import { ArquitecturaSoModule } from './arquitectura-so/arquitectura-so.module';
-import { EstadoLicenciamientoModule } from './estado-licenciamiento/estado-licenciamiento.module';
-import { EstadosSoModule } from './estados-so/estados-so.module';
 import { PantallaModule } from './pantalla/pantalla.module';
 import { TecladoModule } from './teclado/teclado.module';
 import { MouseModule } from './mouse/mouse.module';
 import { MonitorModule } from './monitor/monitor.module';
+import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funcionamiento.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
+      ssl: process.env.STAGE === 'prod' ? true : false,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT!,
@@ -63,18 +59,13 @@ import { MonitorModule } from './monitor/monitor.module';
     TipoEquipoModule,
     TipoProcesadorModule,
     ModeloProcesadorModule,
-    TipoVelocidadModule,
     TipoAlmacenamientoExtraibleModule,
-    TipoConexionRedModule,
-    SistemaOperativoModule,
     VersionSoModule,
-    ArquitecturaSoModule,
-    EstadoLicenciamientoModule,
-    EstadosSoModule,
     PantallaModule,
     TecladoModule,
     MouseModule,
     MonitorModule,
+    EstadoFuncionamientoModule,
   ],
   controllers: [],
   providers: [],

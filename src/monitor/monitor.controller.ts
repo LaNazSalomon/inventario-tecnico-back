@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { MonitorService } from './monitor.service';
 import { CreateMonitorDto } from './dto/create-monitor.dto';
 import { UpdateMonitorDto } from './dto/update-monitor.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('monitor')
+@Auth()
 export class MonitorController {
   constructor(private readonly monitorService: MonitorService) {}
 

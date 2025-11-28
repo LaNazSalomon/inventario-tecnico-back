@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ModeloEquipo } from './entities/modelo-equipo.entity';
 import { CreateModeloEquipoDto } from './dto/create-modelo-equipo.dto';
 import { UpdateModeloEquipoDto } from './dto/update-modelo-equipo.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ModeloEquipo } from './entities/modelo-equipo.entity';
-import { Repository } from 'typeorm';
-import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
+import { isUUID } from 'class-validator';
 import { ManejadorErroresDB } from 'src/common/helpers/ManejadorErroresDB';
 
 @Injectable()
@@ -12,50 +12,91 @@ export class ModeloEquipoService {
   constructor(
     @InjectRepository(ModeloEquipo)
     private readonly modeloEquipoRepository: Repository<ModeloEquipo>,
-    @InjectRepository(MarcaEquipo)
-    private readonly marcaEquipoRepository: Repository<MarcaEquipo>,
   ) {}
 
-
-  //TODO: Ver si hay posibilidad que poniendo el modelo ya no tengamos que poner
-  //* La marca en los equipos y que esto se cargue automaticamente
-  async create(createModeloEquipoDto: CreateModeloEquipoDto) {
+  async create(createDto: CreateModeloEquipoDto) {
     try {
-      const { marcaId, ...restoDatos } = createModeloEquipoDto;
-
-      const marca = await this.marcaEquipoRepository.findOne({
-        where: { id: marcaId },
+      const existente = await this.modeloEquipoRepository.findOne({
+        where: { nombre: createDto.nombre, marca: { id: createDto.marcaId } },
+        relations: ['marca'],
       });
 
-      if (!marca) throw new NotFoundException('No se encontro la marca.');
+      if (existente) {
+        throw new ConflictException('Ya existe un modelo con ese nombre para esta marca');
+      }
 
-      const modeloEquipo = this.modeloEquipoRepository.create({
-        ...restoDatos,
-        marca,
+      const modelo = this.modeloEquipoRepository.create({
+        nombre: createDto.nombre,
+        marca: { id: createDto.marcaId } as any,
       });
 
-      await this.modeloEquipoRepository.save(modeloEquipo);
-
-      return 'Modelo de equipo registrado exitosamente.';
+      return await this.modeloEquipoRepository.save(modelo);
     } catch (err) {
       ManejadorErroresDB.erroresDB(err, 'Modelo-Equipo');
-
     }
   }
 
-  findAll() {
-    return `This action returns all modeloEquipo`;
+  async findAll() {
+    try {
+      return await this.modeloEquipoRepository.find({ relations: ['marca'] });
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Modelo-Equipo');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} modeloEquipo`;
+  async findByTerm(term: string) {
+    let modelos: ModeloEquipo | ModeloEquipo[] | null;
+
+    try {
+      if (isUUID(term)) {
+        modelos = await this.modeloEquipoRepository.findOne({
+          where: { id: term },
+          relations: ['marca'],
+        });
+      } else {
+        modelos = await this.modeloEquipoRepository.createQueryBuilder('modelo')
+          .leftJoinAndSelect('modelo.marca', 'marca')
+          .where('modelo.nombre ILIKE :term', { term: `%${term}%` })
+          .orWhere('marca.nombre ILIKE :term', { term: `%${term}%` })
+          .getMany();
+      }
+
+      if (!modelos || (Array.isArray(modelos) && modelos.length === 0)) {
+        throw new NotFoundException('No se encontró ningún modelo de equipo');
+      }
+
+      return modelos;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Modelo-Equipo');
+    }
   }
 
-  update(id: number, updateModeloEquipoDto: UpdateModeloEquipoDto) {
-    return `This action updates a #${id} modeloEquipo`;
+  async update(id: string, updateDto: UpdateModeloEquipoDto) {
+    try {
+      const modelo = await this.modeloEquipoRepository.preload({
+        id,
+        ...updateDto,
+        marca: updateDto.marcaId ? { id: updateDto.marcaId } as any : undefined,
+      });
+
+      if (!modelo) throw new NotFoundException(`No se encontró el modelo con ID ${id}`);
+      return await this.modeloEquipoRepository.save(modelo);
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Modelo-Equipo');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} modeloEquipo`;
+  async remove(id: string) {
+    try {
+      const modelo = await this.modeloEquipoRepository.findOne({
+        where: { id },
+        relations: ['marca'],
+      });
+      if (!modelo) throw new NotFoundException(`No se encontró el modelo con ID ${id}`);
+      await this.modeloEquipoRepository.remove(modelo);
+      return `Modelo de equipo con ID ${id} eliminado correctamente`;
+    } catch (err) {
+      ManejadorErroresDB.erroresDB(err, 'Modelo-Equipo');
+    }
   }
 }

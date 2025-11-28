@@ -10,8 +10,10 @@ import {
 import { TecladoService } from './teclado.service';
 import { CreateTecladoDto } from './dto/create-teclado.dto';
 import { UpdateTecladoDto } from './dto/update-teclado.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('teclado')
+@Auth()
 export class TecladoController {
   constructor(private readonly tecladoService: TecladoService) {}
 

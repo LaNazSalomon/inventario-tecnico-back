@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query } from '@nestjs/common';
 import { EquiposComputoService } from './equipos-computo.service';
 import { CreateEquiposComputoDto } from './dto/create-equipos-computo.dto';
 import { UpdateEquiposComputoDto } from './dto/update-equipos-computo.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('equipos-computo')
+@Auth()
 export class EquiposComputoController {
   constructor(private readonly equiposComputoService: EquiposComputoService) {}
 
@@ -14,7 +16,7 @@ export class EquiposComputoController {
   }
 
   @Get()
-  findAll(paginationDto: PaginationDto) {
+  findAll( @Query() paginationDto: PaginationDto) {
     return this.equiposComputoService.findAll(paginationDto);
   }
 

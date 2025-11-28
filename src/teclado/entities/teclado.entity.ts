@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 
 @Entity('teclado')
 export class Teclado {

@@ -1,11 +1,22 @@
-import { 
-  IsNotEmpty, IsString, IsInt, IsUUID, IsNumber, IsOptional, IsDateString 
-} from "class-validator";
+import {
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsUUID,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+} from 'class-validator';
+import { Arquitectura } from '../enums/arquitectura.enum';
+import { TipoVelocidad } from '../enums/tipo-velocidad-procesador.enum';
+import { TipoConexionRed } from '../enums/tipo-conexion-red.enum';
+import { EstadoLicencia } from '../enums/estado-licencia.enum';
+import { SistemaOperativo } from '../enums/sistema-operativo.enum';
 
 export class CreateEquiposComputoDto {
-  @IsInt({ message: 'El inventario debe ser un número entero' })
   @IsNotEmpty({ message: 'El inventario no puede estar vacío' })
-  inventario: number;
+  inventario: string;
 
   @IsString({ message: 'El nombre del equipo tiene que ser texto' })
   @IsNotEmpty({ message: 'El nombre del equipo no puede estar vacío' })
@@ -35,8 +46,11 @@ export class CreateEquiposComputoDto {
   @IsString({ message: 'El nombre de dominio debe ser texto' })
   nombreDominio: string;
 
-  @IsUUID('4', { message: 'El tipo de conexión de red debe ser un UUID válido' })
-  tipoConexionRedId: string;
+  @IsEnum(TipoConexionRed, {
+    message:
+      'El tipo de conexión debe ser válido (ej. Wi‑Fi, Ethernet, Datos móviles)',
+  })
+  tipoConexionRed: TipoConexionRed;
 
   @IsUUID('4', { message: 'El tipo de procesador debe ser un UUID válido' })
   tipoProcesadorId: string;
@@ -47,8 +61,10 @@ export class CreateEquiposComputoDto {
   @IsNumber({}, { message: 'La velocidad del procesador debe ser numérica' })
   velocidadProcesador: number;
 
-  @IsUUID('4', { message: 'El tipo de velocidad debe ser un UUID válido' })
-  tipoVelocidadId: string;
+  @IsEnum(TipoVelocidad, {
+    message: 'El tipo de velocidad debe ser uno de: Hz, kHz, MHz, GHz, THz',
+  })
+  tipoVelocidad: TipoVelocidad;
 
   @IsInt({ message: 'El número de núcleos debe ser entero' })
   nucleos: number;
@@ -59,19 +75,29 @@ export class CreateEquiposComputoDto {
   @IsString({ message: 'La capacidad de almacenamiento debe ser texto' })
   capacidadAlmacenamiento: string;
 
-  @IsUUID('4', { message: 'El sistema operativo debe ser un UUID válido' })
-  sistemaOperativoId: string;
+  @IsEnum(SistemaOperativo, {
+    message:
+      'El sistema operativo debe ser válido (Windows, Linux, macOS, Android, iOS, Otro)',
+  })
+  sistemaOperativo: SistemaOperativo;
 
   @IsUUID('4', { message: 'La versión del SO debe ser un UUID válido' })
   versionSOId: string;
 
-  @IsUUID('4', { message: 'La arquitectura del SO debe ser un UUID válido' })
-  arquitecturaSOId: string;
+  @IsEnum(Arquitectura, {
+    message: 'La arquitectura del SO no es válida',
+  })
+  arquitecturaSO: Arquitectura;
 
-  @IsUUID('4', { message: 'El estado de licenciamiento debe ser un UUID válido' })
-  estadoLicenciamientoId: string;
+  @IsEnum(EstadoLicencia, {
+    message:
+      'El estado de la licencia debe ser válido (ej. Activa, Expirada, En prueba)',
+  })
+  estadoLicencia: EstadoLicencia;
 
-  @IsUUID('4', { message: 'El estado de funcionamiento debe ser un UUID válido' })
+  @IsUUID('4', {
+    message: 'El estado de funcionamiento debe ser un UUID válido',
+  })
   estadoFuncionamientoId: string;
 
   @IsString({ message: 'La serie debe ser texto' })
@@ -89,7 +115,9 @@ export class CreateEquiposComputoDto {
   @IsInt({ message: 'La cantidad de puertos USB debe ser un número entero' })
   cantidadPuertosUSB: number;
 
-  @IsInt({ message: 'La cantidad de puertos de audio debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos de audio debe ser un número entero',
+  })
   cantidadPuertosAudio: number;
 
   @IsInt({ message: 'La cantidad de puertos de red debe ser un número entero' })
@@ -113,20 +141,33 @@ export class CreateEquiposComputoDto {
   @IsInt({ message: 'La cantidad de micrófonos debe ser un número entero' })
   cantidadMicrofono: number;
 
-  @IsUUID('4', { message: 'El tipo de almacenamiento extraíble debe ser un UUID válido' })
+  @IsUUID('4', {
+    message: 'El tipo de almacenamiento extraíble debe ser un UUID válido',
+  })
   tipoAlmacenamientoExtraibleId: string;
 
-  @IsDateString({}, { message: 'La fecha de vencimiento de garantía debe tener formato de fecha' })
+  @IsDateString(
+    {},
+    {
+      message:
+        'La fecha de vencimiento de garantía debe tener formato de fecha',
+    },
+  )
   fechaVencimientoGarantia: Date;
 
   @IsString({ message: 'El complemento debe ser texto' })
   @IsOptional()
   complemento?: string;
 
-  @IsInt({ message: 'La cantidad de puertos MiniHDMI debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos MiniHDMI debe ser un número entero',
+  })
   cantidadPuertosMiniHDMI: number;
 
-  @IsInt({ message: 'La cantidad de puertos de tarjeta de memoria debe ser un número entero' })
+  @IsInt({
+    message:
+      'La cantidad de puertos de tarjeta de memoria debe ser un número entero',
+  })
   cantidadPuertosTarjetaMemoria: number;
 
   @IsInt({ message: 'La cantidad de puertos DIN5 debe ser un número entero' })
@@ -135,19 +176,27 @@ export class CreateEquiposComputoDto {
   @IsInt({ message: 'La cantidad de puertos DIN6 debe ser un número entero' })
   cantidadPuertosDIN6: number;
 
-  @IsInt({ message: 'La cantidad de puertos MiniDIN debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos MiniDIN debe ser un número entero',
+  })
   cantidadPuertosMiniDIN: number;
 
   @IsString({ message: 'La dirección MAC debe ser texto' })
   mac: string;
 
-  @IsInt({ message: 'La cantidad de puertos paralelo debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos paralelo debe ser un número entero',
+  })
   cantidadPuertosParalelo: number;
 
-  @IsInt({ message: 'La cantidad de puertos DisplayPort debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos DisplayPort debe ser un número entero',
+  })
   cantidadPuertosDisplayPort: number;
 
-  @IsInt({ message: 'La cantidad de puertos Serial COM1 debe ser un número entero' })
+  @IsInt({
+    message: 'La cantidad de puertos Serial COM1 debe ser un número entero',
+  })
   cantidadPuertoSerialCom1: number;
 
   @IsUUID('4', { message: 'El empleado asignado debe ser un UUID válido' })

@@ -11,8 +11,14 @@ async function main() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
-  )
+    }),
+  );
+
+  app.enableCors({
+    origin: 'https://gestor-utvm-inventario.vercel.app',
+    credentials: true,
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

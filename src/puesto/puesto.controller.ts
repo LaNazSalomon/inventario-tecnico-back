@@ -3,8 +3,10 @@ import { PuestoService } from './puesto.service';
 import { CreatePuestoDto } from './dto/create-puesto.dto';
 import { UpdatePuestoDto } from './dto/update-puesto.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('puesto')
+@Auth()
 export class PuestoController {
   constructor(private readonly puestoService: PuestoService) {}
 

@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { MouseService } from './mouse.service';
 import { CreateMouseDto } from './dto/create-mouse.dto';
 import { UpdateMouseDto } from './dto/update-mouse.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('mouse')
+@Auth()
 export class MouseController {
   constructor(private readonly mouseService: MouseService) {}
 

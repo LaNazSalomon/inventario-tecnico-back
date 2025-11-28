@@ -9,6 +9,7 @@ import { TamanoPantallaController } from './tamano-pantalla/tamano-pantalla.cont
 import { TipoPantallaService } from './tipo-pantalla.service';
 import { TamanoPantallaService } from './tamano-pantalla/tamano-pantalla.service';
 import { ResolucionPantallaService } from './resolucion-pantalla.service';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ResolucionPantallaService } from './resolucion-pantalla.service';
       ResolucionPantalla,
       TamanoPantalla,
     ]),
+  UsersModule 
   ],
   controllers: [
     ResolucionPantallaController,

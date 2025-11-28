@@ -3,8 +3,10 @@ import { TipoEquipoService } from './tipo-equipo.service';
 import { CreateTipoEquipoDto } from './dto/create-tipo-equipo.dto';
 import { UpdateTipoEquipoDto } from './dto/update-tipo-equipo.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('tipo-equipo')
+@Auth()
 export class TipoEquipoController {
   constructor(private readonly tipoEquipoService: TipoEquipoService) {}
 

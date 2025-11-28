@@ -5,8 +5,10 @@ import { ResolucionPantallaService } from './resolucion-pantalla.service';
 import { CreateResolucionPantallaDto } from './dto/create-resolucion-pantalla.dto';
 import { UpdateResolucionPantallaDto } from './dto/update-resolucion-pantalla.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/users/decorators/auth.decorator';
 
 @Controller('resolucion-pantalla')
+@Auth()
 export class ResolucionPantallaController {
   constructor(private readonly resolucionService: ResolucionPantallaService) {}
 

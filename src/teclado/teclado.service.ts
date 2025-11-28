@@ -5,9 +5,9 @@ import { Teclado } from './entities/teclado.entity';
 import { CreateTecladoDto } from './dto/create-teclado.dto';
 import { UpdateTecladoDto } from './dto/update-teclado.dto';
 import { User } from 'src/users/entities/user.entity';
-import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
 import { isUUID } from 'class-validator';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 
 @Injectable()
 export class TecladoService {

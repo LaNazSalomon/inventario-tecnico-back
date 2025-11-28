@@ -6,6 +6,8 @@ export class TipoPantalla {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
+  @Column('text', {
+    unique: true
+  })
   tipo: string;
 }

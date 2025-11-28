@@ -3,9 +3,10 @@ import { TipoEquipoService } from './tipo-equipo.service';
 import { TipoEquipoController } from './tipo-equipo.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TipoEquipo } from './entities/tipo-equipo.entity';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([TipoEquipo])],
+  imports: [ TypeOrmModule.forFeature([TipoEquipo]), UsersModule],
   controllers: [TipoEquipoController],
   providers: [TipoEquipoService],
   exports: [ TypeOrmModule ]

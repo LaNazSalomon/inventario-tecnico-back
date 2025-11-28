@@ -5,9 +5,9 @@ import { Monitor } from './entities/monitor.entity';
 import { CreateMonitorDto } from './dto/create-monitor.dto';
 import { UpdateMonitorDto } from './dto/update-monitor.dto';
 import { User } from 'src/users/entities/user.entity';
-import { EstadoFuncionamiento } from 'src/estados-so/entities/estados-so.entity';
 import { isUUID } from 'class-validator';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 
 @Injectable()
 export class MonitorService {

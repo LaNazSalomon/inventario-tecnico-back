@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,17 +8,18 @@ import { PuestoModule } from 'src/puesto/puesto.module';
 import { EmailsModule } from 'src/emails/emails.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    DepartamentoModule,
+    forwardRef(() => DepartamentoModule),
     PuestoModule,
     EmailsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
-      imports: [],
-      inject: [],
+      imports: [  ],
+      inject: [  ],
       useFactory: () => {
         return {
           secret: process.env.JWT_SECRET,
@@ -30,7 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
-  exports: [TypeOrmModule],
+  providers: [UsersService, JwtStrategy],
+  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule],
 })
 export class UsersModule {}

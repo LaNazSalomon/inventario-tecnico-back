@@ -14,27 +14,34 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from 'src/users/dto/login.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from './decorators/auth.decorator';
+import { Roles } from 'src/common/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+
   @Post()
+  @Auth( Roles.Admin )
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
+  @Auth()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usersService.findAll(paginationDto);
   }
 
   @Get(':term')
+  @Auth( Roles.Admin )
   findByTerm(@Param('term') term: string) {
     return this.usersService.findByTerm(term);
   }
 
   @Patch(':id')
+  @Auth( Roles.Admin )
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -43,6 +50,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Auth( Roles.Admin )
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }

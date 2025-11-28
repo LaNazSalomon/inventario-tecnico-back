@@ -1,4 +1,3 @@
-/*
 import { createParamDecorator, ExecutionContext, InternalServerErrorException } from "@nestjs/common";
 
 
@@ -13,5 +12,3 @@ export const GetUser = createParamDecorator(
         return user;
     }
 );
-
-*/

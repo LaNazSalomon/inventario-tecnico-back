@@ -1,7 +1,0 @@
-import { IsNotEmpty, IsString } from "class-validator";
-
-export class CreateEstadoLicenciamientoDto {
-  @IsString()
-  @IsNotEmpty()
-  estado: string;
-}
