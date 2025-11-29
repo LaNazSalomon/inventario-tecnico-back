@@ -18,8 +18,6 @@ import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.
 import { User } from 'src/users/entities/user.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
-import { TipoConexionRed } from './enums/tipo-conexion-red.enum';
-import { TipoVelocidad } from './enums/tipo-velocidad-procesador.enum';
 
 @Injectable()
 export class EquiposComputoService {

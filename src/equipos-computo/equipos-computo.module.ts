@@ -10,7 +10,6 @@ import { TipoProcesadorModule } from 'src/tipo-procesador/tipo-procesador.module
 import { ModeloProcesadorModule } from 'src/modelo-procesador/modelo-procesador.module';
 import { TipoAlmacenamientoExtraibleModule } from 'src/tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
 import { VersionSoModule } from 'src/version-so/version-so.module';
-import { PantallaModule } from 'src/pantalla/pantalla.module';
 import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
 import { UsersModule } from 'src/users/users.module';
 import { DepartamentoModule } from 'src/departamento/departamento.module';
@@ -26,7 +25,6 @@ import { EstadoFuncionamientoModule } from 'src/estado-funcionamiento/estado-fun
     TipoAlmacenamientoExtraibleModule,
     VersionSoModule,
     TypeOrmModule,
-    PantallaModule,
     UnidadAcademicaModule,
     EstadoFuncionamientoModule,
     UsersModule,

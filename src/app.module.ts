@@ -15,7 +15,6 @@ import { TipoProcesadorModule } from './tipo-procesador/tipo-procesador.module';
 import { ModeloProcesadorModule } from './modelo-procesador/modelo-procesador.module';
 import { TipoAlmacenamientoExtraibleModule } from './tipo-almacenamiento-extraible/tipo-almacenamiento-extraible.module';
 import { VersionSoModule } from './version-so/version-so.module';
-import { PantallaModule } from './pantalla/pantalla.module';
 import { TecladoModule } from './teclado/teclado.module';
 import { MouseModule } from './mouse/mouse.module';
 import { MonitorModule } from './monitor/monitor.module';
@@ -61,7 +60,6 @@ import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funci
     ModeloProcesadorModule,
     TipoAlmacenamientoExtraibleModule,
     VersionSoModule,
-    PantallaModule,
     TecladoModule,
     MouseModule,
     MonitorModule,
