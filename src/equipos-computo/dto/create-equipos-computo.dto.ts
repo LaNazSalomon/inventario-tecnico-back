@@ -103,15 +103,6 @@ export class CreateEquiposComputoDto {
   @IsString({ message: 'La serie debe ser texto' })
   serie: string;
 
-  @IsUUID('4', { message: 'El tamaño de pantalla debe ser un UUID válido' })
-  pantallaPulgadasId: string;
-
-  @IsUUID('4', { message: 'La resolución de pantalla debe ser un UUID válido' })
-  pantallaResolucionId: string;
-
-  @IsUUID('4', { message: 'El tipo de pantalla debe ser un UUID válido' })
-  pantallaTipoId: string;
-
   @IsInt({ message: 'La cantidad de puertos USB debe ser un número entero' })
   cantidadPuertosUSB: number;
 
@@ -153,7 +144,7 @@ export class CreateEquiposComputoDto {
         'La fecha de vencimiento de garantía debe tener formato de fecha',
     },
   )
-  fechaVencimientoGarantia: Date;
+  fechaVencimientoGarantia!: Date;
 
   @IsString({ message: 'El complemento debe ser texto' })
   @IsOptional()

@@ -15,9 +15,6 @@ import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.ent
 import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
 import { TipoAlmacenamientoExtraible } from 'src/tipo-almacenamiento-extraible/entities/tipo-almacenamiento-extraible.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';
-import { TamanoPantalla } from 'src/pantalla/entities/tamano-pantalla.entity';
-import { ResolucionPantalla } from 'src/pantalla/entities/resolucion-pantalla.entity';
-import { TipoPantalla } from 'src/pantalla/entities/tipo-pantalla.entity';
 import { SistemaOperativo } from '../enums/sistema-operativo.enum';
 import { Arquitectura } from '../enums/arquitectura.enum';
 import { TipoVelocidad } from '../enums/tipo-velocidad-procesador.enum';
@@ -128,19 +125,6 @@ export class EquiposComputo {
 
   @Column('text')
   serie: string;
-
-  //* Vamos por aca
-  @ManyToOne(() => TamanoPantalla)
-  @JoinColumn({ name: 'tamano_pantalla_id' })
-  pantallaPulgadas: TamanoPantalla;
-
-  @ManyToOne(() => ResolucionPantalla)
-  @JoinColumn({ name: 'resolucion_pantalla_id' })
-  pantallaResolucion: ResolucionPantalla;
-
-  @ManyToOne(() => TipoPantalla)
-  @JoinColumn({ name: 'tipo_pantalla_id' })
-  pantallaTipo: TipoPantalla;
 
   @Column('int')
   cantidadPuertosUSB: number;
