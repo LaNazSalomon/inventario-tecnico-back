@@ -15,7 +15,7 @@ async function main() {
   );
 
   app.enableCors({
-    origin: 'https://gestor-utvm-inventario.vercel.app',
+    origin: process.env.URL_FRONT,
     credentials: true,
     methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
   });
