@@ -113,6 +113,7 @@ export class UsersService {
     if (isUUID(term)) {
       users = await this.userRepository.findOne({
         where: { idEmpleado: term },
+        relations: ['puesto', 'departamento'],
       });
     } else {
       const queryBuilder = this.userRepository.createQueryBuilder('user');
