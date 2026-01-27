@@ -2,8 +2,8 @@ import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } f
 import { Roles } from 'src/common/enums/role.enum';
 
 export class CreateUserDto {
-  @IsNumber()
-  numeroEmpleado: number;
+  @IsNumber( {}, { message: 'Se esperaba que el numero de empleado fuera un numero' } )
+  numeroEmpleado: string;
 
   @IsOptional()
   @IsEnum(Roles, { message: 'Solo pueden ser los roles existentes (admin, usuario).' })

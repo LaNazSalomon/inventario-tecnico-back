@@ -31,11 +31,11 @@ export class User {
   })
   rol: Roles;
 
-  @Column('integer', {
+  @Column('text', {
     unique: true,
     nullable: false
   })
-  numeroEmpleado: number;
+  numeroEmpleado: string;
 
   @Column('text')
   nombreEmpleado: string;
