@@ -19,6 +19,7 @@ import { TecladoModule } from './teclado/teclado.module';
 import { MouseModule } from './mouse/mouse.module';
 import { MonitorModule } from './monitor/monitor.module';
 import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funcionamiento.module';
+import { ServidoresModule } from './servidor/servidores.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funci
     MouseModule,
     MonitorModule,
     EstadoFuncionamientoModule,
+    ServidoresModule,
   ],
   controllers: [],
   providers: [],
