@@ -4,30 +4,98 @@ import { Repository } from 'typeorm';
 import { Servidor } from './entities/servidor.entity';
 import { CreateServidorDto } from './dto/create-servidor.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
+import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
+import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
+import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
+import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
+import { VersionSO } from 'src/version-so/entities/version-so.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ServidorService {
   constructor(
     @InjectRepository(Servidor)
     private readonly servidorRepository: Repository<Servidor>,
+    @InjectRepository(MarcaEquipo)
+    private readonly marcaRepository: Repository<MarcaEquipo>,
+    @InjectRepository(ModeloEquipo)
+    private readonly modeloRepository: Repository<ModeloEquipo>,
+    @InjectRepository(TipoProcesador)
+    private readonly tipoProcesadorRepository: Repository<TipoProcesador>,
+    @InjectRepository(ModeloProcesador) 
+    private readonly modeloProcesadorRepository: Repository<ModeloProcesador>,
+    @InjectRepository(VersionSO)
+    private readonly versionSORepository: Repository<VersionSO>,
+    @InjectRepository(EstadoFuncionamiento)
+    private readonly estadoFuncionamientoRepository: Repository<EstadoFuncionamiento>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createServidorDto: CreateServidorDto): Promise<Servidor> {
-    const servidor = this.servidorRepository.create({
-      ...createServidorDto,
-      // relaciones: asignamos solo el id
-      marca: { id: createServidorDto.marcaId } as any,
-      modelo: { id: createServidorDto.modeloId } as any,
-      tipoProcesador: { id: createServidorDto.tipoProcesadorId } as any,
-      modeloProcesador: { id: createServidorDto.modeloProcesadorId } as any,
-      versionSO: { id: createServidorDto.versionSOId } as any,
-      estadoFuncionamiento: {
-        id: createServidorDto.estadoFuncionamientoId,
-      } as any,
-      empleado: { id: createServidorDto.empleadoId } as any,
-    });
-    return await this.servidorRepository.save(servidor);
-  }
+ async create(createServidorDto: CreateServidorDto) {
+  // Buscar entidades relacionadas
+  const marca = await this.marcaRepository.findOneBy({ id: createServidorDto.marcaId });
+  if (!marca) throw new NotFoundException('Marca no encontrada');
+
+  const modelo = await this.modeloRepository.findOneBy({ id: createServidorDto.modeloId });
+  if (!modelo) throw new NotFoundException('Modelo no encontrado');
+
+  const tipoProcesador = await this.tipoProcesadorRepository.findOneBy({ id: createServidorDto.tipoProcesadorId });
+  if (!tipoProcesador) throw new NotFoundException('Tipo de procesador no encontrado');
+
+  const modeloProcesador = await this.modeloProcesadorRepository.findOneBy({ id: createServidorDto.modeloProcesadorId });
+  if (!modeloProcesador) throw new NotFoundException('Modelo de procesador no encontrado');
+
+  const versionSO = await this.versionSORepository.findOneBy({ id: createServidorDto.versionSOId });
+  if (!versionSO) throw new NotFoundException('Versión de SO no encontrada');
+
+  const estadoFuncionamiento = await this.estadoFuncionamientoRepository.findOneBy({ id: createServidorDto.estadoFuncionamientoId });
+  if (!estadoFuncionamiento) throw new NotFoundException('Estado de funcionamiento no encontrado');
+
+  const empleado = await this.userRepository.findOneBy({ idEmpleado: createServidorDto.empleadoId });
+  if (!empleado) throw new NotFoundException('Empleado no encontrado');
+
+  // Crear el servidor con las relaciones cargadas
+  const servidor = this.servidorRepository.create({
+    tipoServidor: createServidorDto.tipoServidor,
+    velocidadProcesador: createServidorDto.velocidadProcesador,
+    nucleosProcesador: createServidorDto.nucleosProcesador,
+    cantidadProcesadores: createServidorDto.cantidadProcesadores,
+    cantidadMaxProcesadores: createServidorDto.cantidadMaxProcesadores,
+    capacidadRAM: createServidorDto.capacidadRAM,
+    capacidadMaxRAM: createServidorDto.capacidadMaxRAM,
+    capacidadAlmacenamiento: createServidorDto.capacidadAlmacenamiento,
+    porcentajeUsoAlmacenamiento: createServidorDto.porcentajeUsoAlmacenamiento,
+    sistemaOperativo: createServidorDto.sistemaOperativo,
+    arquitecturaSO: createServidorDto.arquitecturaSO,
+    estadoLicenciamientoSO: createServidorDto.estadoLicenciamientoSO,
+    tipoConexion: createServidorDto.tipoConexion,
+    direccionIPInterna: createServidorDto.direccionIPInterna,
+    direccionIPExterna: createServidorDto.direccionIPExterna,
+    rol: createServidorDto.rol,
+    proposito: createServidorDto.proposito,
+    criticidad: createServidorDto.criticidad,
+    puertosAbiertos: createServidorDto.puertosAbiertos,
+    aplicaBalanceoCarga: createServidorDto.aplicaBalanceoCarga,
+    politicaRespaldo: createServidorDto.politicaRespaldo,
+    tipoPoliticaRespaldo: createServidorDto.tipoPoliticaRespaldo,
+    periodicidadRespaldo: createServidorDto.periodicidadRespaldo,
+    serie: createServidorDto.serie,
+    fechaVencimientoGarantia: createServidorDto.fechaVencimientoGarantia,
+
+    // Relaciones
+    marca,
+    modelo,
+    tipoProcesador,
+    modeloProcesador,
+    versionSO,
+    estadoFuncionamiento,
+    empleado,
+  });
+
+  return await this.servidorRepository.save(servidor);
+}
 
   async findAll(
     paginationDto: PaginationDto,
