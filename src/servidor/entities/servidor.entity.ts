@@ -8,7 +8,6 @@ import {
 
 import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
 import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
-import { TipoEquipo } from 'src/tipo-equipo/entities/tipo-equipo.entity'; // puedes crear TipoServidor si lo prefieres
 import { TipoProcesador } from 'src/tipo-procesador/entities/tipo-procesador.entity';
 import { ModeloProcesador } from 'src/modelo-procesador/entities/modelo-procesador.entity';
 import { VersionSO } from 'src/version-so/entities/version-so.entity';

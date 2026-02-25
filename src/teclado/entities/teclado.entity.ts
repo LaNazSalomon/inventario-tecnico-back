@@ -8,6 +8,7 @@ export class Teclado {
   @PrimaryGeneratedColumn('uuid')
   idTeclado: string;
 
+  //TODO: Modificar a string y agregar validación de formato
   @Column('int')
   numeroInventario: number;
 
