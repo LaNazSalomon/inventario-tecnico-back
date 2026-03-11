@@ -21,6 +21,7 @@ import { MonitorModule } from './monitor/monitor.module';
 import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funcionamiento.module';
 import { ServidoresModule } from './servidor/servidores.module';
 import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.module';
+import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.mo
     EstadoFuncionamientoModule,
     ServidoresModule,
     EquiposImpresionModule,
+    EquipoProyeccionModule,
   ],
   controllers: [],
   providers: [],
