@@ -20,7 +20,7 @@ import { MouseModule } from './mouse/mouse.module';
 import { MonitorModule } from './monitor/monitor.module';
 import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funcionamiento.module';
 import { ServidoresModule } from './servidor/servidores.module';
-import { MantenimientoModule } from './mantenimiento/mantenimiento.module';
+import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.module';
 
 @Module({
   imports: [
@@ -67,7 +67,7 @@ import { MantenimientoModule } from './mantenimiento/mantenimiento.module';
     MonitorModule,
     EstadoFuncionamientoModule,
     ServidoresModule,
-    MantenimientoModule,
+    EquiposImpresionModule,
   ],
   controllers: [],
   providers: [],

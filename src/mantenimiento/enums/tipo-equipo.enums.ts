@@ -1,7 +1,0 @@
-export enum TipoEquipo {
-  COMPUTADOR = 'COMPUTADOR',
-  MOUSE = 'MOUSE',
-  TECLADO = 'TECLADO',
-  MONITOR = 'MONITOR',
-  SERVIDOR = 'SERVIDOR',
-}
