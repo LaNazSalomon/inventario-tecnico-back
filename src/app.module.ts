@@ -22,6 +22,7 @@ import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funci
 import { ServidoresModule } from './servidor/servidores.module';
 import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.module';
 import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.module';
+import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almacenamiento.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.mo
     ServidoresModule,
     EquiposImpresionModule,
     EquipoProyeccionModule,
+    EquipoAlmacenamientoModule,
   ],
   controllers: [],
   providers: [],

@@ -32,6 +32,7 @@ export class EquipoProyeccionController {
     return this.equiposProyeccionService.findAll(paginationDto);
   }
 
+  //TODO: Quitar el ID para que pueda buscar por mas terminos 
   @Get(':id')
   findByTerm(@Param('id', ParseUUIDPipe) id: string) {
     return this.equiposProyeccionService.findByTerm(id);
