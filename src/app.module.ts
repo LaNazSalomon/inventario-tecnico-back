@@ -23,6 +23,7 @@ import { ServidoresModule } from './servidor/servidores.module';
 import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.module';
 import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.module';
 import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almacenamiento.module';
+import { EquipoEnergiaModule } from './equipo-energia/equipo-energia.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almac
     EquiposImpresionModule,
     EquipoProyeccionModule,
     EquipoAlmacenamientoModule,
+    EquipoEnergiaModule,
   ],
   controllers: [],
   providers: [],
