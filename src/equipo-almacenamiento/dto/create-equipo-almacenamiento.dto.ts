@@ -39,4 +39,10 @@ export class CreateEquipoAlmacenamientoDto {
     message: `El tipo de equipo de almacenamiento debe ser uno de los siguientes valores: ${Object.values(TipoEquipoAlmacenamiento).join(', ')}`,
   })
   tipoEquipoAlmacenamiento: TipoEquipoAlmacenamiento;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
 }

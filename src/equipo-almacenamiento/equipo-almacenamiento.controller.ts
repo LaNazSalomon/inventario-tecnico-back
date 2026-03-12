@@ -25,15 +25,17 @@ export class EquipoAlmacenamientoController {
   create(@Body() createDto: CreateEquipoAlmacenamientoDto) {
     return this.equiposAlmacenamientoService.create(createDto);
   }
-
-  @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.equiposAlmacenamientoService.findAll(paginationDto);
-  }
+@Get()
+findAll(@Query() query: PaginationDto) {
+  return this.equiposAlmacenamientoService.findAll(query);
+}
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
-    return this.equiposAlmacenamientoService.findByTerm(term);
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.equiposAlmacenamientoService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')

@@ -10,6 +10,8 @@ import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
 import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
 import { User } from 'src/users/entities/user.entity';
 import { TipoEquipoAlmacenamiento } from '../enums/tipo-equipo-almacenamiento.enum';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Entity('equipos_almacenamiento')
 export class EquipoAlmacenamiento {
@@ -49,4 +51,12 @@ export class EquipoAlmacenamiento {
     default: TipoEquipoAlmacenamiento.DISCO_DURO,
   })
   tipoEquipoAlmacenamiento: TipoEquipoAlmacenamiento;
+
+  @ManyToOne(() => Departamento, { nullable: false })
+  @JoinColumn({ name: 'idDepartamento' })
+  departamento: Departamento;
+
+  @ManyToOne(() => UnidadAcademica, { nullable: false })
+  @JoinColumn({ name: 'idUnidadAcademica' })
+  unidadAcademica: UnidadAcademica;
 }
