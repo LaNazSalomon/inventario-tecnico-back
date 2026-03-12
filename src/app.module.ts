@@ -24,6 +24,7 @@ import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.mo
 import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.module';
 import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almacenamiento.module';
 import { EquipoEnergiaModule } from './equipo-energia/equipo-energia.module';
+import { EquipoTelefonicoModule } from './equipo-telefonico/equipo-telefonico.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { EquipoEnergiaModule } from './equipo-energia/equipo-energia.module';
     EquipoProyeccionModule,
     EquipoAlmacenamientoModule,
     EquipoEnergiaModule,
+    EquipoTelefonicoModule,
   ],
   controllers: [],
   providers: [],
