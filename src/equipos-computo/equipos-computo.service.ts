@@ -189,14 +189,12 @@ export class EquiposComputoService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto, unidadAcademicaId: string) {
+  async findAll(paginationDto: PaginationDto) {
     try {
       const { limit = 50, offset = 0 } = paginationDto;
-
       return await this.equiposRepository.find({
         take: limit,
         skip: offset,
-        where: { unidadAcademica: { idUnidadAcademica: unidadAcademicaId } },
         relations: [
           'tipoEquipo',
           'marca',
@@ -216,7 +214,7 @@ export class EquiposComputoService {
     }
   }
 
-  async findByTerm(term: string, unidadAcademicaId: string) {
+  async findByTerm(term: string) {
     let equipos: EquiposComputo | EquiposComputo[] | null;
 
     try {
@@ -236,11 +234,8 @@ export class EquiposComputoService {
 
       if (isUUID(term)) {
         equipos = await this.equiposRepository.findOne({
-          where: {
-            id: term,
-            unidadAcademica: { idUnidadAcademica: unidadAcademicaId },
-          },
-          relations,
+          where: { id: term },
+          relations: relations,
         });
       } else {
         equipos = await this.equiposRepository
@@ -262,10 +257,7 @@ export class EquiposComputoService {
           .leftJoinAndSelect('equipo.empleadoAsignado', 'empleadoAsignado')
           .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
           .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
-          .where('equipo.unidadAcademica = :unidadAcademicaId', {
-            unidadAcademicaId,
-          })
-          .andWhere(
+          .where(
             'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
             { term: `%${term}%` },
           )
@@ -281,6 +273,7 @@ export class EquiposComputoService {
       ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
     }
   }
+
   async update(id: string, updateDto: UpdateEquiposComputoDto) {
     try {
       const equipo = await this.equiposRepository.preload({ id, ...updateDto });
