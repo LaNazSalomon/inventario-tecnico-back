@@ -7,17 +7,25 @@ import { MarcaEquipoModule } from 'src/marca-equipo/marca-equipo.module';
 import { ModeloEquipoModule } from 'src/modelo-equipo/modelo-equipo.module';
 import { UsersModule } from 'src/users/users.module';
 import { EquipoEnergia } from './entities/equipo-energia.entity';
+import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
+import { DepartamentoModule } from 'src/departamento/departamento.module';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
+import { ReportesEnergiaController } from './reports/reportes-energia.controller';
+import { ReportesEnergiaService } from './reports/reportes-energia.service';
 
 @Module({
   imports: [
     EstadoFuncionamientoModule,
     MarcaEquipoModule,
     ModeloEquipoModule,
+    DepartamentoModule,
+    UnidadAcademicaModule,
+    UtilsReportsModule,
     UsersModule,
     TypeOrmModule.forFeature([EquipoEnergia]),
   ],
-  controllers: [EquipoEnergiaController],
-  providers: [EquipoEnergiaService],
+  controllers: [EquipoEnergiaController, ReportesEnergiaController],
+  providers: [EquipoEnergiaService, ReportesEnergiaService],
   exports: [TypeOrmModule],
 })
 export class EquipoEnergiaModule {}

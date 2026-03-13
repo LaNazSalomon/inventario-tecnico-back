@@ -9,6 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EquipoAlmacenamiento } from './entities/equipo-almacenamiento.entity';
 import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
 import { DepartamentoModule } from 'src/departamento/departamento.module';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
+import { ReportesAlmacenamientoController } from './reports/reportes-almacenamiento.controller';
+import { ReportesAlmacenamientoService } from './reports/reportes-almacenamiento.service';
 
 @Module({
   imports: [
@@ -18,10 +21,14 @@ import { DepartamentoModule } from 'src/departamento/departamento.module';
     UsersModule,
     UnidadAcademicaModule,
     DepartamentoModule,
-    TypeOrmModule.forFeature([ EquipoAlmacenamiento ]),
+    UtilsReportsModule,
+    TypeOrmModule.forFeature([EquipoAlmacenamiento]),
   ],
-  controllers: [EquipoAlmacenamientoController],
-  providers: [EquipoAlmacenamientoService],
-  exports: [ TypeOrmModule ],
+  controllers: [
+    EquipoAlmacenamientoController,
+    ReportesAlmacenamientoController,
+  ],
+  providers: [EquipoAlmacenamientoService, ReportesAlmacenamientoService],
+  exports: [TypeOrmModule],
 })
 export class EquipoAlmacenamientoModule {}

@@ -10,8 +10,8 @@ import { DepartamentoModule } from 'src/departamento/departamento.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EquipoProyeccion } from './entities/equipo-proyeccion.entity';
 import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
-import { ReportesController } from './reportes/reportes-proyectores.controller';
-import { ReportesProyectoresService } from './reportes/reportes-proyectores.service';
+import { ReportesController } from './reports/reportes-proyectores.controller';
+import { ReportesProyectoresService } from './reports/reportes-proyectores.service';
 
 @Module({
   imports: [
@@ -22,10 +22,10 @@ import { ReportesProyectoresService } from './reportes/reportes-proyectores.serv
     UsersModule,
     UnidadAcademicaModule,
     DepartamentoModule,
-    TypeOrmModule.forFeature([ EquipoProyeccion ]),
+    TypeOrmModule.forFeature([EquipoProyeccion]),
   ],
   controllers: [EquipoProyeccionController, ReportesController],
   providers: [EquipoProyeccionService, ReportesProyectoresService],
-  exports: [ TypeOrmModule ],
+  exports: [TypeOrmModule],
 })
 export class EquipoProyeccionModule {}

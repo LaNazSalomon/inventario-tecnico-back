@@ -10,6 +10,8 @@ import { MarcaEquipo } from 'src/marca-equipo/entities/marca-equipo.entity';
 import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
 import { User } from 'src/users/entities/user.entity';
 import { TipoEquipoEnergia } from '../enums/tipo-equipo-energia.enum';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Entity('equipos_energia')
 export class EquipoEnergia {
@@ -37,6 +39,14 @@ export class EquipoEnergia {
   @ManyToOne(() => EstadoFuncionamiento)
   @JoinColumn({ name: 'estado_funcionamiento_id' })
   estadoFuncionamiento: EstadoFuncionamiento;
+
+  @ManyToOne(() => Departamento, { nullable: false })
+  @JoinColumn({ name: 'idDepartamento' })
+  departamento: Departamento;
+
+  @ManyToOne(() => UnidadAcademica, { nullable: false })
+  @JoinColumn({ name: 'idUnidadAcademica' })
+  unidadAcademica: UnidadAcademica;
 
   @Column({
     type: 'enum',

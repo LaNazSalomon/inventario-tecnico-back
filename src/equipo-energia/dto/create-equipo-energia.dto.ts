@@ -29,6 +29,12 @@ export class CreateEquipoEnergiaDto {
   })
   estadoFuncionamientoId: string;
 
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
+
   @IsEnum(TipoEquipoEnergia, {
     message: `El tipo de equipo de energía debe ser uno de los siguientes valores: ${Object.values(TipoEquipoEnergia).join(', ')}`,
   })
