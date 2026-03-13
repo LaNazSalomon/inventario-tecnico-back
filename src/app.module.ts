@@ -25,6 +25,7 @@ import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.mo
 import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almacenamiento.module';
 import { EquipoEnergiaModule } from './equipo-energia/equipo-energia.module';
 import { EquipoTelefonicoModule } from './equipo-telefonico/equipo-telefonico.module';
+import { UtilsReportsModule } from './utils-reports/utils-reports.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { EquipoTelefonicoModule } from './equipo-telefonico/equipo-telefonico.mo
     EquipoAlmacenamientoModule,
     EquipoEnergiaModule,
     EquipoTelefonicoModule,
+    UtilsReportsModule,
   ],
   controllers: [],
   providers: [],

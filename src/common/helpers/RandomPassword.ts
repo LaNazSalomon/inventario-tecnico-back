@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import * as generatePassword from 'generate-password';
-
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

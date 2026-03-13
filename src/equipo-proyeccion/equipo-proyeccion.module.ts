@@ -9,9 +9,13 @@ import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.mod
 import { DepartamentoModule } from 'src/departamento/departamento.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EquipoProyeccion } from './entities/equipo-proyeccion.entity';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
+import { ReportesController } from './reportes/reportes-proyectores.controller';
+import { ReportesProyectoresService } from './reportes/reportes-proyectores.service';
 
 @Module({
   imports: [
+    UtilsReportsModule,
     EstadoFuncionamientoModule,
     MarcaEquipoModule,
     ModeloEquipoModule,
@@ -20,8 +24,8 @@ import { EquipoProyeccion } from './entities/equipo-proyeccion.entity';
     DepartamentoModule,
     TypeOrmModule.forFeature([ EquipoProyeccion ]),
   ],
-  controllers: [EquipoProyeccionController],
-  providers: [EquipoProyeccionService],
+  controllers: [EquipoProyeccionController, ReportesController],
+  providers: [EquipoProyeccionService, ReportesProyectoresService],
   exports: [ TypeOrmModule ],
 })
 export class EquipoProyeccionModule {}

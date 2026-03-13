@@ -1,4 +1,4 @@
-import { Roles } from 'src/common/enums/role.enum';
+import { Roles } from '../../common/enums/role.enum';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { Puesto } from 'src/puesto/entities/puesto.entity';
 import {
