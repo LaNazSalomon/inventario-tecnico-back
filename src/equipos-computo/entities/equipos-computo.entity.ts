@@ -63,7 +63,7 @@ export class EquiposComputo {
   @Column({
     type: 'enum',
     enum: TipoConexionRed,
-    name: 'tipo_conexion_red'
+    name: 'tipoConexionRed'
   })
   tipoConexionRed: TipoConexionRed;
 
@@ -81,7 +81,7 @@ export class EquiposComputo {
   @Column({
     type: 'enum',
     enum: TipoVelocidad,
-    name: 'tipo_velocidad'
+    name: 'tipoVelocidad'
   })
   tipoVelocidad: TipoVelocidad;
 
@@ -97,7 +97,7 @@ export class EquiposComputo {
   @Column({
     type: 'enum',
     enum: SistemaOperativo,
-    name: 'sistema_operativo'
+    name: 'sistemaOperativo'
   })
   sistemaOperativo: SistemaOperativo;
 
@@ -108,14 +108,14 @@ export class EquiposComputo {
   @Column({
     type: 'enum',
     enum: Arquitectura,
-    name: 'arquitectura_so'
+    name: 'arquitecturaSO'
   })
   arquitecturaSO: Arquitectura;
 
   @Column({
     type: 'enum',
     enum: EstadoLicencia,
-    name: 'estado_licencia'
+    name: 'estadoLicencia'
   })
   estadoLicencia: EstadoLicencia;
 

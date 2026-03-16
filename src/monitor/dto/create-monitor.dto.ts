@@ -1,4 +1,11 @@
-import { IsInt, IsString, IsDateString, IsUUID, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsDateString,
+  IsUUID,
+  IsNotEmpty,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateMonitorDto {
   @IsInt({ message: 'El número de inventario debe ser un número entero' })
@@ -38,8 +45,15 @@ export class CreateMonitorDto {
   @IsNotEmpty({ message: 'La serie no puede estar vacía' })
   serie: string;
 
-  @IsDateString({}, { message: 'La fecha de vencimiento de garantía debe ser una fecha válida' })
-  @IsNotEmpty({ message: 'La fecha de vencimiento de garantía no puede estar vacía' })
+  @IsDateString(
+    {},
+    {
+      message: 'La fecha de vencimiento de garantía debe ser una fecha válida',
+    },
+  )
+  @IsNotEmpty({
+    message: 'La fecha de vencimiento de garantía no puede estar vacía',
+  })
   fechaVencimientoGarantia: Date;
 
   @IsUUID('4', { message: 'El estado debe ser un UUID válido' })
@@ -53,4 +67,10 @@ export class CreateMonitorDto {
   @IsUUID('4', { message: 'El equipo debe ser un UUID válido' })
   @IsNotEmpty({ message: 'El equipo es obligatorio' })
   idEquipo: string;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
 }

@@ -19,7 +19,7 @@ export const columnasComputo = [
   'capacidadRam',
   'capacidadAlmacenamiento',
   'sistemaOperativo',
-  'versionSO',
+  'version_so',
   'arquitecturaSO',
   'estadoLicencia',
   'estado_funcionamiento',

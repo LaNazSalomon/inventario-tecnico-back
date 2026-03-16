@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('version-so')
 export class VersionSO {
@@ -7,5 +7,4 @@ export class VersionSO {
 
   @Column()
   version: string;
-
 }
