@@ -9,6 +9,9 @@ import { UsersModule } from 'src/users/users.module';
 import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
 import { DepartamentoModule } from 'src/departamento/departamento.module';
 import { EquipoImpresion } from './entities/equipos-impresion.entity';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
+import { ReportesImpresorasController } from './reports/reportes-impresoras.controller';
+import { ReportesImpresorasSerivce } from './reports/reportes-impresioras.service';
 
 @Module({
   imports: [
@@ -18,10 +21,11 @@ import { EquipoImpresion } from './entities/equipos-impresion.entity';
     UsersModule,
     UnidadAcademicaModule,
     DepartamentoModule,
+    UtilsReportsModule,
     TypeOrmModule.forFeature([EquipoImpresion]),
   ],
-  controllers: [EquiposImpresionController],
-  providers: [EquiposImpresionService],
+  controllers: [EquiposImpresionController, ReportesImpresorasController],
+  providers: [EquiposImpresionService, ReportesImpresorasSerivce],
   exports: [TypeOrmModule],
 })
 export class EquiposImpresionModule {}

@@ -10,6 +10,8 @@ import { ModeloEquipo } from 'src/modelo-equipo/entities/modelo-equipo.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class EquipoTelefonicoService {
@@ -28,21 +30,63 @@ export class EquipoTelefonicoService {
 
     @InjectRepository(EstadoFuncionamiento)
     private readonly estadoRepository: Repository<EstadoFuncionamiento>,
+
+    @InjectRepository(Departamento)
+    private readonly departamentoRepository: Repository<Departamento>,
+
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadAcademicaRepository: Repository<UnidadAcademica>,
   ) {}
 
   async create(createDto: CreateEquipoTelefonicoDto) {
     // Validar relaciones
-    const usuario = await this.userRepository.findOneBy({ idEmpleado: createDto.usuarioId });
-    if (!usuario) throw new NotFoundException(`Usuario con ID ${createDto.usuarioId} no encontrado`);
+    const usuario = await this.userRepository.findOneBy({
+      idEmpleado: createDto.usuarioId,
+    });
+    if (!usuario)
+      throw new NotFoundException(
+        `Usuario con ID ${createDto.usuarioId} no encontrado`,
+      );
 
-    const marca = await this.marcaRepository.findOneBy({ id: createDto.marcaEquipoTelefonicoId });
-    if (!marca) throw new NotFoundException(`Marca con ID ${createDto.marcaEquipoTelefonicoId} no encontrada`);
+    const marca = await this.marcaRepository.findOneBy({
+      id: createDto.marcaEquipoTelefonicoId,
+    });
+    if (!marca)
+      throw new NotFoundException(
+        `Marca con ID ${createDto.marcaEquipoTelefonicoId} no encontrada`,
+      );
 
-    const modelo = await this.modeloRepository.findOneBy({ id: createDto.modeloEquipoTelefonicoId });
-    if (!modelo) throw new NotFoundException(`Modelo con ID ${createDto.modeloEquipoTelefonicoId} no encontrado`);
+    const modelo = await this.modeloRepository.findOneBy({
+      id: createDto.modeloEquipoTelefonicoId,
+    });
+    if (!modelo)
+      throw new NotFoundException(
+        `Modelo con ID ${createDto.modeloEquipoTelefonicoId} no encontrado`,
+      );
 
-    const estado = await this.estadoRepository.findOneBy({ id: createDto.estadoFuncionamientoId });
-    if (!estado) throw new NotFoundException(`Estado con ID ${createDto.estadoFuncionamientoId} no encontrado`);
+    const estado = await this.estadoRepository.findOneBy({
+      id: createDto.estadoFuncionamientoId,
+    });
+    if (!estado)
+      throw new NotFoundException(
+        `Estado con ID ${createDto.estadoFuncionamientoId} no encontrado`,
+      );
+
+    const departamento = await this.departamentoRepository.findOneBy({
+      idDepartamento: createDto.idDepartamento,
+    });
+    if (!departamento)
+      throw new NotFoundException(
+        `Departamento con ID ${createDto.idDepartamento} no encontrado`,
+      );
+
+    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+      idUnidadAcademica: createDto.idUnidadAcademica,
+    });
+    if (!unidadAcademica)
+      throw new NotFoundException(
+        `Unidad académica con ID ${createDto.idUnidadAcademica} no encontrada`,
+      );
 
     const equipo = this.equiposRepository.create({
       inventario: createDto.inventario,
@@ -56,6 +100,8 @@ export class EquipoTelefonicoService {
       marcaEquipoTelefonico: marca,
       modeloEquipoTelefonico: modelo,
       estadoFuncionamiento: estado,
+      departamento,
+      unidadAcademica,
     });
 
     return await this.equiposRepository.save(equipo);
@@ -72,6 +118,8 @@ export class EquipoTelefonicoService {
         'marcaEquipoTelefonico',
         'modeloEquipoTelefonico',
         'estadoFuncionamiento',
+        'departamento',
+        'unidadAcademica',
       ],
     });
   }
@@ -85,6 +133,8 @@ export class EquipoTelefonicoService {
           'marcaEquipoTelefonico',
           'modeloEquipoTelefonico',
           'estadoFuncionamiento',
+          'departamento',
+          'unidadAcademica',
         ],
       });
 
@@ -126,15 +176,21 @@ export class EquipoTelefonicoService {
       ...updateDto,
     });
     if (!equipo) {
-      throw new NotFoundException(`Equipo telefónico con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Equipo telefónico con ID ${id} no encontrado`,
+      );
     }
     return await this.equiposRepository.save(equipo);
   }
 
   async remove(id: string) {
-    const equipo = await this.equiposRepository.findOneBy({ idEquipoTelefonico: id });
+    const equipo = await this.equiposRepository.findOneBy({
+      idEquipoTelefonico: id,
+    });
     if (!equipo) {
-      throw new NotFoundException(`Equipo telefónico con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Equipo telefónico con ID ${id} no encontrado`,
+      );
     }
     return await this.equiposRepository.remove(equipo);
   }

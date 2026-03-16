@@ -55,4 +55,10 @@ export class CreateEquipoTelefonicoDto {
     message: 'El estado_funcionamiento_id debe ser un UUID válido.',
   })
   estadoFuncionamientoId: string;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
 }
