@@ -16,8 +16,8 @@ export class Mouse {
   @PrimaryGeneratedColumn('uuid')
   idMouse: string;
 
-  @Column('int')
-  numeroInventario: number;
+  @Column('varchar')
+  numeroInventario: string;
 
   @Column('varchar')
   marca: string;

@@ -9,7 +9,7 @@ import {
 export class CreateMouseDto {
   @IsInt({ message: 'El número de inventario debe ser un número entero' })
   @IsNotEmpty({ message: 'El número de inventario no puede estar vacío' })
-  numeroInventario: number;
+  numeroInventario: string;
 
   @IsString({ message: 'La marca debe ser texto' })
   @IsNotEmpty({ message: 'La marca no puede estar vacía' })

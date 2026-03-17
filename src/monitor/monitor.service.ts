@@ -8,6 +8,8 @@ import { User } from 'src/users/entities/user.entity';
 import { isUUID } from 'class-validator';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class MonitorService {
@@ -23,6 +25,12 @@ export class MonitorService {
 
     @InjectRepository(EquiposComputo)
     private readonly equipoRepository: Repository<EquiposComputo>,
+
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadAcademicaRepository: Repository<UnidadAcademica>,
+
+    @InjectRepository(Departamento)
+    private readonly departamentoRepository: Repository<Departamento>,
   ) {}
 
   async create(createDto: CreateMonitorDto) {
@@ -50,6 +58,24 @@ export class MonitorService {
         `Equipo con ID ${createDto.idEquipo} no encontrado`,
       );
 
+    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+      idUnidadAcademica: createDto.idUnidadAcademica,
+    });
+    if (!unidadAcademica) {
+      throw new NotFoundException(
+        `Unidad académica con ID ${createDto.idUnidadAcademica} no encontrada`,
+      );
+    }
+
+    const departamento = await this.departamentoRepository.findOneBy({
+      idDepartamento: createDto.idDepartamento,
+    });
+    if (!departamento) {
+      throw new NotFoundException(
+        `Departamento con ID ${createDto.idDepartamento} no encontrado`,
+      );
+    }
+
     const monitor = this.monitorRepository.create({
       numeroInventario: createDto.numeroInventario,
       marca: createDto.marca,
@@ -65,6 +91,8 @@ export class MonitorService {
       estado,
       empleado,
       equipo,
+      departamento,
+      unidadAcademica,
     });
 
     return await this.monitorRepository.save(monitor);
@@ -72,7 +100,13 @@ export class MonitorService {
 
   async findAll() {
     return await this.monitorRepository.find({
-      relations: ['estado', 'empleado', 'equipo'],
+      relations: [
+        'estado',
+        'empleado',
+        'equipo',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
   }
 
@@ -82,7 +116,13 @@ export class MonitorService {
     if (isUUID(term)) {
       monitor = await this.monitorRepository.findOne({
         where: { idMonitor: term },
-        relations: ['estado', 'empleado', 'equipo'],
+        relations: [
+          'estado',
+          'empleado',
+          'equipo',
+          'unidadAcademica',
+          'departamento',
+        ],
       });
     } else {
       monitor = await this.monitorRepository
@@ -90,6 +130,8 @@ export class MonitorService {
         .leftJoinAndSelect('monitor.estado', 'estado')
         .leftJoinAndSelect('monitor.empleado', 'empleado')
         .leftJoinAndSelect('monitor.equipo', 'equipo')
+        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('equipo.departamento', 'departamento')
         .where('monitor.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('monitor.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('monitor.serie ILIKE :term', { term: `%${term}%` })

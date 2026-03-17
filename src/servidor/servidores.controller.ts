@@ -13,6 +13,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Auth } from 'src/users/decorators/auth.decorator';
 import { CreateServidorDto } from './dto/create-servidor.dto';
 import { ServidorService } from './servidores.service';
+import { UpdateServidorDto } from './dto/update-servidore.dto';
 
 @Controller('servidores')
 @Auth()
@@ -37,7 +38,7 @@ export class ServidorController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateServidorDto: CreateServidorDto,
+    @Body() updateServidorDto: UpdateServidorDto,
   ) {
     return this.servidorService.update(id, updateServidorDto);
   }

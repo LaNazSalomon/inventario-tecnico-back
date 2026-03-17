@@ -84,7 +84,7 @@ export class CreateServidorDto {
 
   @IsEnum(TipoConexionRed, {
     message:
-      'El tipo de conexión debe ser válido (Wi‑Fi, Ethernet, Datos móviles)',
+      'El tipo de conexión debe ser válido (WiFi, Ethernet, Datos móviles)',
   })
   tipoConexion: TipoConexionRed;
 
@@ -138,4 +138,10 @@ export class CreateServidorDto {
 
   @IsUUID('4', { message: 'El empleado debe ser un UUID válido' })
   empleadoId: string;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
 }

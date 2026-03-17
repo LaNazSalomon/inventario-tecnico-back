@@ -8,6 +8,8 @@ import { User } from 'src/users/entities/user.entity';
 import { isUUID } from 'class-validator';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class MouseService {
@@ -23,23 +25,59 @@ export class MouseService {
 
     @InjectRepository(EquiposComputo)
     private readonly equipoRepository: Repository<EquiposComputo>,
+
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadAcademicaRepository: Repository<UnidadAcademica>,
+
+    @InjectRepository(Departamento)
+    private readonly departamentoRepository: Repository<Departamento>,
   ) {}
 
   async create(createDto: CreateMouseDto) {
     // Validar relaciones antes de crear
-    const estado = await this.estadoRepository.findOneBy({ id: createDto.idEstado });
+    const estado = await this.estadoRepository.findOneBy({
+      id: createDto.idEstado,
+    });
     if (!estado) {
-      throw new NotFoundException(`Estado con ID ${createDto.idEstado} no encontrado`);
+      throw new NotFoundException(
+        `Estado con ID ${createDto.idEstado} no encontrado`,
+      );
     }
 
-    const empleado = await this.userRepository.findOneBy({ idEmpleado: createDto.idEmpleado });
+    const empleado = await this.userRepository.findOneBy({
+      idEmpleado: createDto.idEmpleado,
+    });
     if (!empleado) {
-      throw new NotFoundException(`Empleado con ID ${createDto.idEmpleado} no encontrado`);
+      throw new NotFoundException(
+        `Empleado con ID ${createDto.idEmpleado} no encontrado`,
+      );
     }
 
-    const equipo = await this.equipoRepository.findOneBy({ id: createDto.idEquipo });
+    const equipo = await this.equipoRepository.findOneBy({
+      id: createDto.idEquipo,
+    });
     if (!equipo) {
-      throw new NotFoundException(`Equipo con ID ${createDto.idEquipo} no encontrado`);
+      throw new NotFoundException(
+        `Equipo con ID ${createDto.idEquipo} no encontrado`,
+      );
+    }
+
+    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+      idUnidadAcademica: createDto.idUnidadAcademica,
+    });
+    if (!unidadAcademica) {
+      throw new NotFoundException(
+        `Unidad académica con ID ${createDto.idUnidadAcademica} no encontrada`,
+      );
+    }
+
+    const departamento = await this.departamentoRepository.findOneBy({
+      idDepartamento: createDto.idDepartamento,
+    });
+    if (!departamento) {
+      throw new NotFoundException(
+        `Departamento con ID ${createDto.idDepartamento} no encontrado`,
+      );
     }
 
     // Crear el mouse con relaciones validadas
@@ -54,6 +92,8 @@ export class MouseService {
       estado,
       empleado,
       equipo,
+      unidadAcademica,
+      departamento,
     });
 
     return await this.mouseRepository.save(mouse);
@@ -61,7 +101,13 @@ export class MouseService {
 
   async findAll() {
     return await this.mouseRepository.find({
-      relations: ['estado', 'empleado', 'equipo'],
+      relations: [
+        'estado',
+        'empleado',
+        'equipo',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
   }
 
@@ -71,7 +117,13 @@ export class MouseService {
     if (isUUID(term)) {
       mouse = await this.mouseRepository.findOne({
         where: { idMouse: term },
-        relations: ['estado', 'empleado', 'equipo'],
+        relations: [
+          'estado',
+          'empleado',
+          'equipo',
+          'unidadAcademica',
+          'departamento',
+        ],
       });
     } else {
       mouse = await this.mouseRepository
@@ -79,6 +131,8 @@ export class MouseService {
         .leftJoinAndSelect('mouse.estado', 'estado')
         .leftJoinAndSelect('mouse.empleado', 'empleado')
         .leftJoinAndSelect('mouse.equipo', 'equipo')
+        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('equipo.departamento', 'departamento')
         .where('mouse.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('mouse.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('mouse.serie ILIKE :term', { term: `%${term}%` })
@@ -86,7 +140,9 @@ export class MouseService {
     }
 
     if (!mouse || (Array.isArray(mouse) && mouse.length === 0)) {
-      throw new NotFoundException(`No se encontró ningún mouse con el término: ${term}`);
+      throw new NotFoundException(
+        `No se encontró ningún mouse con el término: ${term}`,
+      );
     }
 
     return mouse;

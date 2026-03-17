@@ -18,6 +18,8 @@ import { SistemaOperativo } from 'src/equipos-computo/enums/sistema-operativo.en
 import { Arquitectura } from 'src/equipos-computo/enums/arquitectura.enum';
 import { EstadoLicencia } from 'src/equipos-computo/enums/estado-licencia.enum';
 import { TipoConexionRed } from 'src/equipos-computo/enums/tipo-conexion-red.enum';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Entity('servidor')
 export class Servidor {
@@ -74,7 +76,7 @@ export class Servidor {
   @Column({
     type: 'enum',
     enum: SistemaOperativo,
-    name: 'sistema_operativo',
+    name: 'sistemaOperativo',
   })
   sistemaOperativo: SistemaOperativo;
 
@@ -85,21 +87,21 @@ export class Servidor {
   @Column({
     type: 'enum',
     enum: Arquitectura,
-    name: 'arquitectura_so',
+    name: 'arquitecturaSO',
   })
   arquitecturaSO: Arquitectura;
 
   @Column({
     type: 'enum',
     enum: EstadoLicencia,
-    name: 'estado_licencia_so',
+    name: 'estadoLicenciaSO',
   })
   estadoLicenciamientoSO: EstadoLicencia;
 
   @Column({
     type: 'enum',
     enum: TipoConexionRed,
-    name: 'tipo_conexion',
+    name: 'tipoConexion',
   })
   tipoConexion: TipoConexionRed;
 
@@ -146,4 +148,12 @@ export class Servidor {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'empleado_id' })
   empleado: User;
+
+  @ManyToOne(() => Departamento, { nullable: false })
+  @JoinColumn({ name: 'idDepartamento' })
+  departamento: Departamento;
+
+  @ManyToOne(() => UnidadAcademica, { nullable: false })
+  @JoinColumn({ name: 'idUnidadAcademica' })
+  unidadAcademica: UnidadAcademica;
 }

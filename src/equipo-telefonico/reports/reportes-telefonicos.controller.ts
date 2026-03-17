@@ -8,7 +8,7 @@ export class ReportesTelefonicosController {
 
   @Get()
   async descargarReporte(
-    @Query('usuarioID', ParseUUIDPipe) usuarioId: string,
+    @Query('usuarioId', ParseUUIDPipe) usuarioId: string,
     @Res() res: Response,
   ) {
     return this.reportesService.generarReportesTelefonicos(usuarioId, res);

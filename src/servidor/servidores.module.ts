@@ -10,6 +10,11 @@ import { ModeloProcesadorModule } from 'src/modelo-procesador/modelo-procesador.
 import { VersionSoModule } from 'src/version-so/version-so.module';
 import { EstadoFuncionamientoModule } from 'src/estado-funcionamiento/estado-funcionamiento.module';
 import { ModeloEquipoModule } from 'src/modelo-equipo/modelo-equipo.module';
+import { DepartamentoModule } from 'src/departamento/departamento.module';
+import { UnidadAcademicaModule } from '../unidad-academica/unidad-academica.module';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
+import { ReportesServidorController } from './reports/reportes-servidor.controller';
+import { ReportesServidorService } from './reports/reportes-servidor.service';
 
 @Module({
   imports: [
@@ -21,9 +26,12 @@ import { ModeloEquipoModule } from 'src/modelo-equipo/modelo-equipo.module';
     ModeloProcesadorModule,
     VersionSoModule,
     EstadoFuncionamientoModule,
+    DepartamentoModule,
+    UnidadAcademicaModule,
+    UtilsReportsModule,
   ],
-  controllers: [ServidorController],
-  providers: [ServidorService],
+  controllers: [ServidorController, ReportesServidorController],
+  providers: [ServidorService, ReportesServidorService],
   exports: [TypeOrmModule],
 })
 export class ServidoresModule {}
