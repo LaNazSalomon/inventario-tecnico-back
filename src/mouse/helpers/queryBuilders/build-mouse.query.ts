@@ -14,7 +14,7 @@ export const buildMouseQuery = (
     .innerJoin('m.unidadAcademica', 'ua')
     .select([
       'm."idMouse" AS id',
-      'm.numeroInventario AS numeroInventario',
+      'm."numeroInventario"',
       'm.marca AS marca',
       'm.modelo AS modelo',
       'm."tipoConector"',

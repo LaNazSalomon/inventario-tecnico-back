@@ -8,6 +8,8 @@ import { User } from 'src/users/entities/user.entity';
 import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.entity';
 import { isUUID } from 'class-validator';
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class TecladoService {
@@ -23,6 +25,12 @@ export class TecladoService {
 
     @InjectRepository(EquiposComputo)
     private readonly equipoRepository: Repository<EquiposComputo>,
+
+    @InjectRepository(UnidadAcademica)
+    private readonly unidadAcademicaRepository: Repository<UnidadAcademica>,
+
+    @InjectRepository(Departamento)
+    private readonly departamentoRepository: Repository<Departamento>,
   ) {}
 
   async create(createDto: CreateTecladoDto) {
@@ -51,6 +59,24 @@ export class TecladoService {
         `Equipo con ID ${createDto.idEquipo} no encontrado`,
       );
 
+    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+      idUnidadAcademica: createDto.idUnidadAcademica,
+    });
+    if (!unidadAcademica) {
+      throw new NotFoundException(
+        `Unidad académica con ID ${createDto.idUnidadAcademica} no encontrada`,
+      );
+    }
+
+    const departamento = await this.departamentoRepository.findOneBy({
+      idDepartamento: createDto.idDepartamento,
+    });
+    if (!departamento) {
+      throw new NotFoundException(
+        `Departamento con ID ${createDto.idDepartamento} no encontrado`,
+      );
+    }
+
     // Crear el teclado con relaciones validadas
     const teclado = this.tecladoRepository.create({
       numeroInventario: createDto.numeroInventario,
@@ -62,6 +88,8 @@ export class TecladoService {
       estado,
       empleado,
       equipo,
+      departamento,
+      unidadAcademica,
     });
 
     return await this.tecladoRepository.save(teclado);
@@ -69,7 +97,13 @@ export class TecladoService {
 
   async findAll() {
     return await this.tecladoRepository.find({
-      relations: ['estado', 'empleado', 'equipo'],
+      relations: [
+        'estado',
+        'empleado',
+        'equipo',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
   }
 
@@ -79,7 +113,13 @@ export class TecladoService {
     if (isUUID(term)) {
       teclado = await this.tecladoRepository.findOne({
         where: { idTeclado: term },
-        relations: ['estado', 'empleado', 'equipo'],
+        relations: [
+          'estado',
+          'empleado',
+          'equipo',
+          'unidadAcademica',
+          'departamento',
+        ],
       });
     } else {
       // Buscar por texto en marca, modelo o serie
@@ -88,6 +128,8 @@ export class TecladoService {
         .leftJoinAndSelect('teclado.estado', 'estado')
         .leftJoinAndSelect('teclado.empleado', 'empleado')
         .leftJoinAndSelect('teclado.equipo', 'equipo')
+        .leftJoinAndSelect('teclado.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('teclado.departamento', 'departamento')
         .where('teclado.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('teclado.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('teclado.serie ILIKE :term', { term: `%${term}%` })
