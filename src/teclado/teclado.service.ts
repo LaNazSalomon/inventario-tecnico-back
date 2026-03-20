@@ -172,12 +172,76 @@ export class TecladoService {
   }
 
   async update(id: string, updateDto: UpdateTecladoDto) {
-    const teclado = await this.tecladoRepository.preload({
-      idTeclado: id,
-      ...updateDto,
+    const teclado = await this.tecladoRepository.findOne({
+      where: { idTeclado: id },
+      relations: [
+        'estado',
+        'empleado',
+        'equipo',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
-    if (!teclado)
+    if (!teclado) {
       throw new NotFoundException(`Teclado con ID ${id} no encontrado`);
+    }
+
+    const {
+      idEstado,
+      idEmpleado,
+      idEquipo,
+      idDepartamento,
+      idUnidadAcademica,
+      ...datosActualizar
+    } = updateDto;
+
+    Object.assign(teclado, datosActualizar);
+
+    if (idEstado) {
+      const estado = await this.estadoRepository.findOneBy({ id: idEstado });
+      if (!estado)
+        throw new NotFoundException(`Estado con ID ${idEstado} no encontrado`);
+      teclado.estado = estado;
+    }
+
+    if (idEmpleado) {
+      const empleado = await this.userRepository.findOneBy({ idEmpleado });
+      if (!empleado)
+        throw new NotFoundException(
+          `Empleado con ID ${idEmpleado} no encontrado`,
+        );
+      teclado.empleado = empleado;
+    }
+
+    if (idEquipo) {
+      const equipo = await this.equipoRepository.findOneBy({ id: idEquipo });
+      if (!equipo)
+        throw new NotFoundException(`Equipo con ID ${idEquipo} no encontrado`);
+      teclado.equipo = equipo;
+    }
+
+    if (idDepartamento) {
+      const departamento = await this.departamentoRepository.findOneBy({
+        idDepartamento,
+      });
+      if (!departamento)
+        throw new NotFoundException(
+          `Departamento con ID ${idDepartamento} no encontrado`,
+        );
+      teclado.departamento = departamento;
+    }
+
+    if (idUnidadAcademica) {
+      const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+        idUnidadAcademica,
+      });
+      if (!unidadAcademica)
+        throw new NotFoundException(
+          `Unidad académica con ID ${idUnidadAcademica} no encontrada`,
+        );
+      teclado.unidadAcademica = unidadAcademica;
+    }
+
     return await this.tecladoRepository.save(teclado);
   }
 

@@ -176,13 +176,76 @@ export class MouseService {
   }
 
   async update(id: string, updateDto: UpdateMouseDto) {
-    const mouse = await this.mouseRepository.preload({
-      idMouse: id,
-      ...updateDto,
+    const mouse = await this.mouseRepository.findOne({
+      where: { idMouse: id },
+      relations: [
+        'estado',
+        'empleado',
+        'equipo',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
     if (!mouse) {
       throw new NotFoundException(`Mouse con ID ${id} no encontrado`);
     }
+
+    const {
+      idEstado,
+      idEmpleado,
+      idEquipo,
+      idDepartamento,
+      idUnidadAcademica,
+      ...datosActualizar
+    } = updateDto;
+
+    Object.assign(mouse, datosActualizar);
+
+    if (idEstado) {
+      const estado = await this.estadoRepository.findOneBy({ id: idEstado });
+      if (!estado)
+        throw new NotFoundException(`Estado con ID ${idEstado} no encontrado`);
+      mouse.estado = estado;
+    }
+
+    if (idEmpleado) {
+      const empleado = await this.userRepository.findOneBy({ idEmpleado });
+      if (!empleado)
+        throw new NotFoundException(
+          `Empleado con ID ${idEmpleado} no encontrado`,
+        );
+      mouse.empleado = empleado;
+    }
+
+    if (idEquipo) {
+      const equipo = await this.equipoRepository.findOneBy({ id: idEquipo });
+      if (!equipo)
+        throw new NotFoundException(`Equipo con ID ${idEquipo} no encontrado`);
+      mouse.equipo = equipo;
+    }
+
+    if (idDepartamento) {
+      const departamento = await this.departamentoRepository.findOneBy({
+        idDepartamento,
+      });
+      if (!departamento)
+        throw new NotFoundException(
+          `Departamento con ID ${idDepartamento} no encontrado`,
+        );
+      mouse.departamento = departamento;
+    }
+
+    if (idUnidadAcademica) {
+      const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+        idUnidadAcademica,
+      });
+      if (!unidadAcademica)
+        throw new NotFoundException(
+          `Unidad académica con ID ${idUnidadAcademica} no encontrada`,
+        );
+      mouse.unidadAcademica = unidadAcademica;
+    }
+
     return await this.mouseRepository.save(mouse);
   }
 

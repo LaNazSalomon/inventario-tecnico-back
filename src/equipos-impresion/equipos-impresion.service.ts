@@ -218,15 +218,101 @@ export class EquiposImpresionService {
   }
 
   async update(id: string, updateDto: UpdateEquiposImpresionDto) {
-    const equipo = await this.equiposImpresionRepository.preload({
-      idEquipoImpresion: id,
-      ...updateDto,
+    const equipo = await this.equiposImpresionRepository.findOne({
+      where: { idEquipoImpresion: id },
+      relations: [
+        'estadoFuncionamiento',
+        'usuario',
+        'marcaEquipoImpresion',
+        'modeloEquipoImpresion',
+        'unidadAcademica',
+        'departamentoArea',
+      ],
     });
     if (!equipo) {
       throw new NotFoundException(
         `Equipo de impresión con ID ${id} no encontrado`,
       );
     }
+
+    const {
+      usuarioId,
+      estadoFuncionamientoId,
+      marcaEquipoImpresionId,
+      modeloEquipoImpresionId,
+      unidadAcademicaId,
+      departamentoAreaId,
+      ...datosActualizar
+    } = updateDto;
+
+    Object.assign(equipo, datosActualizar);
+
+    if (usuarioId) {
+      const usuario = await this.userRepository.findOneBy({
+        idEmpleado: usuarioId,
+      });
+      if (!usuario)
+        throw new NotFoundException(
+          `Usuario con ID ${usuarioId} no encontrado`,
+        );
+      equipo.usuario = usuario;
+    }
+
+    if (estadoFuncionamientoId) {
+      const estado = await this.estadoRepository.findOneBy({
+        id: estadoFuncionamientoId,
+      });
+      if (!estado)
+        throw new NotFoundException(
+          `Estado con ID ${estadoFuncionamientoId} no encontrado`,
+        );
+      equipo.estadoFuncionamiento = estado;
+    }
+
+    if (marcaEquipoImpresionId) {
+      const marca = await this.marcaRepository.findOneBy({
+        id: marcaEquipoImpresionId,
+      });
+      if (!marca)
+        throw new NotFoundException(
+          `Marca con ID ${marcaEquipoImpresionId} no encontrada`,
+        );
+      equipo.marcaEquipoImpresion = marca;
+    }
+
+    if (modeloEquipoImpresionId) {
+      const modelo = await this.modeloRepository.findOneBy({
+        id: modeloEquipoImpresionId,
+      });
+      if (!modelo)
+        throw new NotFoundException(
+          `Modelo con ID ${modeloEquipoImpresionId} no encontrado`,
+        );
+      equipo.modeloEquipoImpresion = modelo;
+    }
+
+    if (unidadAcademicaId) {
+      const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+        idUnidadAcademica: unidadAcademicaId,
+      });
+      if (!unidadAcademica)
+        throw new NotFoundException(
+          `Unidad académica con ID ${unidadAcademicaId} no encontrada`,
+        );
+      equipo.unidadAcademica = unidadAcademica;
+    }
+
+    if (departamentoAreaId) {
+      const departamento = await this.departamentoRepository.findOneBy({
+        idDepartamento: departamentoAreaId,
+      });
+      if (!departamento)
+        throw new NotFoundException(
+          `Departamento con ID ${departamentoAreaId} no encontrado`,
+        );
+      equipo.departamentoArea = departamento;
+    }
+
     return await this.equiposImpresionRepository.save(equipo);
   }
 

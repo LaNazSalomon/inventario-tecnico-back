@@ -299,31 +299,160 @@ export class EquiposComputoService {
 
   async update(id: string, updateDto: UpdateEquiposComputoDto) {
     try {
-      const equipo = await this.equiposRepository.preload({ id, ...updateDto });
+      const equipo = await this.equiposRepository.findOne({
+        where: { id },
+        relations: [
+          'tipoEquipo',
+          'marca',
+          'modelo',
+          'tipoProcesador',
+          'modeloProcesador',
+          'versionSO',
+          'estadoFuncionamiento',
+          'tipoAlmacenamientoExtraible',
+          'empleadoAsignado',
+          'unidadAcademica',
+          'departamentoArea',
+        ],
+      });
       if (!equipo)
         throw new NotFoundException(`No se encontró el equipo con ID ${id}`);
 
-      await this.equiposRepository.save(equipo);
+      const {
+        tipoEquipoId,
+        marcaId,
+        modeloId,
+        tipoProcesadorId,
+        modeloProcesadorId,
+        versionSOId,
+        estadoFuncionamientoId,
+        tipoAlmacenamientoExtraibleId,
+        empleadoAsignadoId,
+        unidadAcademicaId,
+        departamentoAreaId,
+        ...datosActualizar
+      } = updateDto;
 
-      // Cargar y retornar con relaciones
-      const relaciones = [
-        'tipoEquipo',
-        'marca',
-        'modelo',
-        'tipoProcesador',
-        'modeloProcesador',
-        'versionSO',
-        'estadoFuncionamiento',
-        'tipoAlmacenamientoExtraible',
-        'empleadoAsignado',
-        'unidadAcademica',
-        'departamentoArea',
-      ];
+      Object.assign(equipo, datosActualizar);
 
-      return await this.equiposRepository.findOne({
-        where: { id },
-        relations: relaciones,
-      });
+      if (tipoEquipoId) {
+        const tipoEquipo = await this.tipoEquipoRepository.findOneBy({
+          id: tipoEquipoId,
+        });
+        if (!tipoEquipo)
+          throw new NotFoundException(
+            `Tipo de equipo con ID ${tipoEquipoId} no encontrado`,
+          );
+        equipo.tipoEquipo = tipoEquipo;
+      }
+
+      if (marcaId) {
+        const marca = await this.marcaRepository.findOneBy({ id: marcaId });
+        if (!marca)
+          throw new NotFoundException(`Marca con ID ${marcaId} no encontrada`);
+        equipo.marca = marca;
+      }
+
+      if (modeloId) {
+        const modelo = await this.modeloRepository.findOneBy({ id: modeloId });
+        if (!modelo)
+          throw new NotFoundException(
+            `Modelo con ID ${modeloId} no encontrado`,
+          );
+        equipo.modelo = modelo;
+      }
+
+      if (tipoProcesadorId) {
+        const tipoProcesador = await this.tipoProcesadorRepository.findOneBy({
+          id: tipoProcesadorId,
+        });
+        if (!tipoProcesador)
+          throw new NotFoundException(
+            `Tipo de procesador con ID ${tipoProcesadorId} no encontrado`,
+          );
+        equipo.tipoProcesador = tipoProcesador;
+      }
+
+      if (modeloProcesadorId) {
+        const modeloProcesador =
+          await this.modeloProcesadorRepository.findOneBy({
+            id: modeloProcesadorId,
+          });
+        if (!modeloProcesador)
+          throw new NotFoundException(
+            `Modelo de procesador con ID ${modeloProcesadorId} no encontrado`,
+          );
+        equipo.modeloProcesador = modeloProcesador;
+      }
+
+      if (versionSOId) {
+        const versionSO = await this.versionSORepository.findOneBy({
+          id: versionSOId,
+        });
+        if (!versionSO)
+          throw new NotFoundException(
+            `Versión de SO con ID ${versionSOId} no encontrada`,
+          );
+        equipo.versionSO = versionSO;
+      }
+
+      if (estadoFuncionamientoId) {
+        const estado = await this.estadoFuncionamientoRepository.findOneBy({
+          id: estadoFuncionamientoId,
+        });
+        if (!estado)
+          throw new NotFoundException(
+            `Estado de funcionamiento con ID ${estadoFuncionamientoId} no encontrado`,
+          );
+        equipo.estadoFuncionamiento = estado;
+      }
+
+      if (tipoAlmacenamientoExtraibleId) {
+        const tipoAlmacenamiento =
+          await this.tipoAlmacenamientoExtraibleRepository.findOneBy({
+            id: tipoAlmacenamientoExtraibleId,
+          });
+        if (!tipoAlmacenamiento)
+          throw new NotFoundException(
+            `Tipo de almacenamiento extraíble con ID ${tipoAlmacenamientoExtraibleId} no encontrado`,
+          );
+        equipo.tipoAlmacenamientoExtraible = tipoAlmacenamiento;
+      }
+
+      if (empleadoAsignadoId) {
+        const empleado = await this.userRepository.findOneBy({
+          idEmpleado: empleadoAsignadoId,
+        });
+        if (!empleado)
+          throw new NotFoundException(
+            `Empleado con ID ${empleadoAsignadoId} no encontrado`,
+          );
+        equipo.empleadoAsignado = empleado;
+      }
+
+      if (unidadAcademicaId) {
+        const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+          idUnidadAcademica: unidadAcademicaId,
+        });
+        if (!unidadAcademica)
+          throw new NotFoundException(
+            `Unidad académica con ID ${unidadAcademicaId} no encontrada`,
+          );
+        equipo.unidadAcademica = unidadAcademica;
+      }
+
+      if (departamentoAreaId) {
+        const departamento = await this.departamentoRepository.findOneBy({
+          idDepartamento: departamentoAreaId,
+        });
+        if (!departamento)
+          throw new NotFoundException(
+            `Departamento con ID ${departamentoAreaId} no encontrado`,
+          );
+        equipo.departamentoArea = departamento;
+      }
+
+      return await this.equiposRepository.save(equipo);
     } catch (err) {
       ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
     }

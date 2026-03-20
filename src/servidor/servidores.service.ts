@@ -268,13 +268,129 @@ export class ServidorService {
   }
 
   async update(id: string, updateDto: UpdateServidorDto): Promise<Servidor> {
-    const servidor = await this.servidorRepository.preload({
-      idServidor: id,
-      ...updateDto,
+    const servidor = await this.servidorRepository.findOne({
+      where: { idServidor: id },
+      relations: [
+        'marca',
+        'modelo',
+        'tipoProcesador',
+        'modeloProcesador',
+        'versionSO',
+        'estadoFuncionamiento',
+        'empleado',
+        'unidadAcademica',
+        'departamento',
+      ],
     });
 
     if (!servidor) {
       throw new NotFoundException(`Servidor con ID ${id} no encontrado`);
+    }
+
+    const {
+      marcaId,
+      modeloId,
+      tipoProcesadorId,
+      modeloProcesadorId,
+      versionSOId,
+      estadoFuncionamientoId,
+      empleadoId,
+      idDepartamento,
+      idUnidadAcademica,
+      ...datosActualizar
+    } = updateDto;
+
+    Object.assign(servidor, datosActualizar);
+
+    if (marcaId) {
+      const marca = await this.marcaRepository.findOneBy({ id: marcaId });
+      if (!marca)
+        throw new NotFoundException(`Marca con ID ${marcaId} no encontrada`);
+      servidor.marca = marca;
+    }
+
+    if (modeloId) {
+      const modelo = await this.modeloRepository.findOneBy({ id: modeloId });
+      if (!modelo)
+        throw new NotFoundException(`Modelo con ID ${modeloId} no encontrado`);
+      servidor.modelo = modelo;
+    }
+
+    if (tipoProcesadorId) {
+      const tipoProcesador = await this.tipoProcesadorRepository.findOneBy({
+        id: tipoProcesadorId,
+      });
+      if (!tipoProcesador)
+        throw new NotFoundException(
+          `Tipo de procesador con ID ${tipoProcesadorId} no encontrado`,
+        );
+      servidor.tipoProcesador = tipoProcesador;
+    }
+
+    if (modeloProcesadorId) {
+      const modeloProcesador = await this.modeloProcesadorRepository.findOneBy({
+        id: modeloProcesadorId,
+      });
+      if (!modeloProcesador)
+        throw new NotFoundException(
+          `Modelo de procesador con ID ${modeloProcesadorId} no encontrado`,
+        );
+      servidor.modeloProcesador = modeloProcesador;
+    }
+
+    if (versionSOId) {
+      const versionSO = await this.versionSORepository.findOneBy({
+        id: versionSOId,
+      });
+      if (!versionSO)
+        throw new NotFoundException(
+          `Versión de SO con ID ${versionSOId} no encontrada`,
+        );
+      servidor.versionSO = versionSO;
+    }
+
+    if (estadoFuncionamientoId) {
+      const estado = await this.estadoFuncionamientoRepository.findOneBy({
+        id: estadoFuncionamientoId,
+      });
+      if (!estado)
+        throw new NotFoundException(
+          `Estado de funcionamiento con ID ${estadoFuncionamientoId} no encontrado`,
+        );
+      servidor.estadoFuncionamiento = estado;
+    }
+
+    if (empleadoId) {
+      const empleado = await this.userRepository.findOneBy({
+        idEmpleado: empleadoId,
+      });
+      if (!empleado)
+        throw new NotFoundException(
+          `Empleado con ID ${empleadoId} no encontrado`,
+        );
+      servidor.empleado = empleado;
+    }
+
+    if (idDepartamento) {
+      const departamento = await this.departamentoRepository.findOneBy({
+        idDepartamento,
+      });
+      if (!departamento)
+        throw new NotFoundException(
+          `Departamento con ID ${idDepartamento} no encontrado`,
+        );
+      servidor.departamento = departamento;
+    }
+
+    if (idUnidadAcademica) {
+      const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+        idUnidadAcademica,
+      });
+      if (!unidadAcademica)
+        throw new NotFoundException(
+          `Unidad académica con ID ${idUnidadAcademica} no encontrada`,
+        );
+      servidor.unidadAcademica = unidadAcademica;
     }
 
     return await this.servidorRepository.save(servidor);
