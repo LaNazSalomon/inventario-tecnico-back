@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { MonitorService } from './monitor.service';
 import { CreateMonitorDto } from './dto/create-monitor.dto';
 import { UpdateMonitorDto } from './dto/update-monitor.dto';
 import { Auth } from 'src/users/decorators/auth.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('monitor')
 @Auth()
@@ -15,17 +26,23 @@ export class MonitorController {
   }
 
   @Get()
-  findAll() {
-    return this.monitorService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.monitorService.findAll(paginationDto);
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
-    return this.monitorService.findByTerm(term);
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.monitorService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateMonitorDto: UpdateMonitorDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateMonitorDto: UpdateMonitorDto,
+  ) {
     return this.monitorService.update(id, updateMonitorDto);
   }
 

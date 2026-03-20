@@ -33,8 +33,11 @@ export class EquiposImpresionController {
   }
 
   @Get(':id')
-  findByTerm(@Param('id', ParseUUIDPipe) id: string) {
-    return this.equiposImpresionService.findByTerm(id);
+  findByTerm(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.equiposImpresionService.findByTerm(id, paginationDto);
   }
 
   @Patch(':id')

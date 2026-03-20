@@ -191,10 +191,11 @@ export class EquiposComputoService {
 
   async findAll(paginationDto: PaginationDto) {
     try {
-      const { limit = 50, offset = 0 } = paginationDto;
+      const { idUnidadAcademica } = paginationDto;
       return await this.equiposRepository.find({
-        take: limit,
-        skip: offset,
+        where: idUnidadAcademica
+          ? { unidadAcademica: { idUnidadAcademica } }
+          : {},
         relations: [
           'tipoEquipo',
           'marca',
@@ -214,31 +215,44 @@ export class EquiposComputoService {
     }
   }
 
-  async findByTerm(term: string) {
-    let equipos: EquiposComputo | EquiposComputo[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<EquiposComputo | EquiposComputo[]> {
+    const { idUnidadAcademica } = paginationDto || {};
+    const relations = [
+      'tipoEquipo',
+      'marca',
+      'modelo',
+      'tipoProcesador',
+      'modeloProcesador',
+      'versionSO',
+      'estadoFuncionamiento',
+      'tipoAlmacenamientoExtraible',
+      'empleadoAsignado',
+      'unidadAcademica',
+      'departamentoArea',
+    ];
 
     try {
-      const relations = [
-        'tipoEquipo',
-        'marca',
-        'modelo',
-        'tipoProcesador',
-        'modeloProcesador',
-        'versionSO',
-        'estadoFuncionamiento',
-        'tipoAlmacenamientoExtraible',
-        'empleadoAsignado',
-        'unidadAcademica',
-        'departamentoArea',
-      ];
-
       if (isUUID(term)) {
-        equipos = await this.equiposRepository.findOne({
-          where: { id: term },
+        const equipo = await this.equiposRepository.findOne({
+          where: {
+            id: term,
+            ...(idUnidadAcademica
+              ? { unidadAcademica: { idUnidadAcademica } }
+              : {}),
+          },
           relations: relations,
         });
+        if (!equipo) {
+          throw new NotFoundException(
+            `No se encontró ningún equipo de cómputo con el ID: ${term}`,
+          );
+        }
+        return equipo;
       } else {
-        equipos = await this.equiposRepository
+        const queryBuilder = this.equiposRepository
           .createQueryBuilder('equipo')
           .leftJoinAndSelect('equipo.tipoEquipo', 'tipoEquipo')
           .leftJoinAndSelect('equipo.marca', 'marca')
@@ -256,19 +270,28 @@ export class EquiposComputoService {
           )
           .leftJoinAndSelect('equipo.empleadoAsignado', 'empleadoAsignado')
           .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-          .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
-          .where(
+          .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea');
+
+        if (idUnidadAcademica) {
+          queryBuilder.where('equipo.unidadAcademica = :idUnidadAcademica', {
+            idUnidadAcademica,
+          });
+        }
+
+        const equipos = await queryBuilder
+          .andWhere(
             'equipo.nombreEquipo ILIKE :term OR equipo.serie ILIKE :term',
             { term: `%${term}%` },
           )
           .getMany();
-      }
 
-      if (!equipos || (Array.isArray(equipos) && equipos.length === 0)) {
-        throw new NotFoundException('No se encontró ningún equipo de cómputo');
+        if (!equipos || equipos.length === 0) {
+          throw new NotFoundException(
+            'No se encontró ningún equipo de cómputo',
+          );
+        }
+        return equipos;
       }
-
-      return equipos;
     } catch (err) {
       ManejadorErroresDB.erroresDB(err, 'EquiposComputo');
     }

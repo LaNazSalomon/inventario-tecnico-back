@@ -14,6 +14,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 import { UpdateServidorDto } from './dto/update-servidore.dto';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ServidorService {
@@ -148,9 +149,12 @@ export class ServidorService {
   async findAll(
     paginationDto: PaginationDto,
   ): Promise<{ data: Servidor[]; total: number }> {
-    const { limit = 50, offset = 0 } = paginationDto;
+    const { limit = 50, offset = 0, idUnidadAcademica } = paginationDto;
 
     const [data, total] = await this.servidorRepository.findAndCount({
+      where: idUnidadAcademica
+        ? { unidadAcademica: { idUnidadAcademica } }
+        : {},
       take: limit,
       skip: offset,
       relations: [
@@ -190,6 +194,77 @@ export class ServidorService {
     }
 
     return servidor;
+  }
+
+  async findByTerm(
+    term: string,
+    paginationDto: PaginationDto,
+  ): Promise<Servidor | Servidor[]> {
+    const { idUnidadAcademica } = paginationDto;
+
+    if (isUUID(term)) {
+      const servidor = await this.servidorRepository.findOne({
+        where: {
+          idServidor: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
+        relations: [
+          'marca',
+          'modelo',
+          'tipoProcesador',
+          'modeloProcesador',
+          'versionSO',
+          'estadoFuncionamiento',
+          'empleado',
+          'unidadAcademica',
+          'departamento',
+        ],
+      });
+      if (!servidor) {
+        throw new NotFoundException(
+          `No se encontró ningún servidor con el ID: ${term}`,
+        );
+      }
+      return servidor;
+    } else {
+      const queryBuilder = this.servidorRepository
+        .createQueryBuilder('servidor')
+        .leftJoinAndSelect('servidor.marca', 'marca')
+        .leftJoinAndSelect('servidor.modelo', 'modelo')
+        .leftJoinAndSelect('servidor.tipoProcesador', 'tipoProcesador')
+        .leftJoinAndSelect('servidor.modeloProcesador', 'modeloProcesador')
+        .leftJoinAndSelect('servidor.versionSO', 'versionSO')
+        .leftJoinAndSelect(
+          'servidor.estadoFuncionamiento',
+          'estadoFuncionamiento',
+        )
+        .leftJoinAndSelect('servidor.empleado', 'empleado')
+        .leftJoinAndSelect('servidor.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('servidor.departamento', 'departamento');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('servidor.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const servidores = await queryBuilder
+        .andWhere('servidor.serie ILIKE :term', { term: `%${term}%` })
+        .orWhere('servidor.tipoServidor ILIKE :term', { term: `%${term}%` })
+        .orWhere('servidor.direccionIPInterna ILIKE :term', {
+          term: `%${term}%`,
+        })
+        .getMany();
+
+      if (!servidores || servidores.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún servidor con el término: ${term}`,
+        );
+      }
+      return servidores;
+    }
   }
 
   async update(id: string, updateDto: UpdateServidorDto): Promise<Servidor> {

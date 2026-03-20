@@ -17,9 +17,7 @@ import { Auth } from 'src/users/decorators/auth.decorator';
 @Controller('equipos-energia')
 @Auth()
 export class EquipoEnergiaController {
-  constructor(
-    private readonly equiposEnergiaService: EquipoEnergiaService,
-  ) {}
+  constructor(private readonly equiposEnergiaService: EquipoEnergiaService) {}
 
   @Post()
   create(@Body() createDto: CreateEquipoEnergiaDto) {
@@ -32,16 +30,16 @@ export class EquipoEnergiaController {
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
     // Aquí aceptamos tanto UUID como búsquedas avanzadas
-    return this.equiposEnergiaService.findByTerm(term);
+    return this.equiposEnergiaService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDto: UpdateEquipoEnergiaDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateDto: UpdateEquipoEnergiaDto) {
     return this.equiposEnergiaService.update(id, updateDto);
   }
 

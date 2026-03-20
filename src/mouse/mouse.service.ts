@@ -10,6 +10,7 @@ import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.ent
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class MouseService {
@@ -99,8 +100,13 @@ export class MouseService {
     return await this.mouseRepository.save(mouse);
   }
 
-  async findAll() {
+  async findAll(paginationDto?: PaginationDto) {
+    const { idUnidadAcademica } = paginationDto || {};
+
     return await this.mouseRepository.find({
+      where: idUnidadAcademica
+        ? { unidadAcademica: { idUnidadAcademica } }
+        : {},
       relations: [
         'estado',
         'empleado',
@@ -111,12 +117,20 @@ export class MouseService {
     });
   }
 
-  async findByTerm(term: string) {
-    let mouse: Mouse | Mouse[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<Mouse | Mouse[]> {
+    const { idUnidadAcademica } = paginationDto || {};
 
     if (isUUID(term)) {
-      mouse = await this.mouseRepository.findOne({
-        where: { idMouse: term },
+      const mouse = await this.mouseRepository.findOne({
+        where: {
+          idMouse: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'estado',
           'empleado',
@@ -125,27 +139,40 @@ export class MouseService {
           'departamento',
         ],
       });
+      if (!mouse) {
+        throw new NotFoundException(
+          `No se encontró ningún mouse con el ID: ${term}`,
+        );
+      }
+      return mouse;
     } else {
-      mouse = await this.mouseRepository
+      const queryBuilder = this.mouseRepository
         .createQueryBuilder('mouse')
         .leftJoinAndSelect('mouse.estado', 'estado')
         .leftJoinAndSelect('mouse.empleado', 'empleado')
         .leftJoinAndSelect('mouse.equipo', 'equipo')
-        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .leftJoinAndSelect('equipo.departamento', 'departamento')
-        .where('mouse.marca ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('mouse.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('mouse.departamento', 'departamento');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('mouse.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const mice = await queryBuilder
+        .andWhere('mouse.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('mouse.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('mouse.serie ILIKE :term', { term: `%${term}%` })
         .getMany();
-    }
 
-    if (!mouse || (Array.isArray(mouse) && mouse.length === 0)) {
-      throw new NotFoundException(
-        `No se encontró ningún mouse con el término: ${term}`,
-      );
+      if (!mice || mice.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún mouse con el término: ${term}`,
+        );
+      }
+      return mice;
     }
-
-    return mouse;
   }
 
   async update(id: string, updateDto: UpdateMouseDto) {

@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TecladoService } from './teclado.service';
 import { CreateTecladoDto } from './dto/create-teclado.dto';
 import { UpdateTecladoDto } from './dto/update-teclado.dto';
 import { Auth } from 'src/users/decorators/auth.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('teclado')
 @Auth()
@@ -23,13 +25,16 @@ export class TecladoController {
   }
 
   @Get()
-  findAll() {
-    return this.tecladoService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.tecladoService.findAll(paginationDto);
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
-    return this.tecladoService.findByTerm(term);
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.tecladoService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')

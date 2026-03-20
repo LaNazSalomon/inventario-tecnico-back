@@ -108,9 +108,12 @@ export class EquipoTelefonicoService {
   }
 
   async findAll(paginationDto?: PaginationDto) {
-    const { limit, offset } = paginationDto || {};
+    const { limit, offset, idUnidadAcademica } = paginationDto || {};
 
     return await this.equiposRepository.find({
+      where: idUnidadAcademica
+        ? { unidadAcademica: { idUnidadAcademica } }
+        : {},
       take: limit,
       skip: offset,
       relations: [
@@ -124,10 +127,20 @@ export class EquipoTelefonicoService {
     });
   }
 
-  async findByTerm(term: string) {
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<EquipoTelefonico | EquipoTelefonico[]> {
+    const { idUnidadAcademica } = paginationDto || {};
+
     if (isUUID(term)) {
       const equipo = await this.equiposRepository.findOne({
-        where: { idEquipoTelefonico: term },
+        where: {
+          idEquipoTelefonico: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'usuario',
           'marcaEquipoTelefonico',
@@ -146,13 +159,23 @@ export class EquipoTelefonicoService {
 
       return equipo;
     } else {
-      const equipos = await this.equiposRepository
+      const queryBuilder = this.equiposRepository
         .createQueryBuilder('equipo')
         .leftJoinAndSelect('equipo.usuario', 'usuario')
         .leftJoinAndSelect('equipo.marcaEquipoTelefonico', 'marca')
         .leftJoinAndSelect('equipo.modeloEquipoTelefonico', 'modelo')
         .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estado')
-        .where('equipo.inventario ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('equipo.departamento', 'departamento');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('equipo.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const equipos = await queryBuilder
+        .andWhere('equipo.inventario ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.numeroExtension ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.direccionIp ILIKE :term', { term: `%${term}%` })

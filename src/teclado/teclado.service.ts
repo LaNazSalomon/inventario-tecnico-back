@@ -10,6 +10,7 @@ import { isUUID } from 'class-validator';
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TecladoService {
@@ -95,8 +96,13 @@ export class TecladoService {
     return await this.tecladoRepository.save(teclado);
   }
 
-  async findAll() {
+  async findAll(paginationDto?: PaginationDto) {
+    const { idUnidadAcademica } = paginationDto || {};
+
     return await this.tecladoRepository.find({
+      where: idUnidadAcademica
+        ? { unidadAcademica: { idUnidadAcademica } }
+        : {},
       relations: [
         'estado',
         'empleado',
@@ -107,12 +113,20 @@ export class TecladoService {
     });
   }
 
-  async findByTerm(term: string) {
-    let teclado: Teclado | Teclado[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<Teclado | Teclado[]> {
+    const { idUnidadAcademica } = paginationDto || {};
 
     if (isUUID(term)) {
-      teclado = await this.tecladoRepository.findOne({
-        where: { idTeclado: term },
+      const teclado = await this.tecladoRepository.findOne({
+        where: {
+          idTeclado: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'estado',
           'empleado',
@@ -121,28 +135,40 @@ export class TecladoService {
           'departamento',
         ],
       });
+      if (!teclado) {
+        throw new NotFoundException(
+          `No se encontró ningún teclado con el ID: ${term}`,
+        );
+      }
+      return teclado;
     } else {
-      // Buscar por texto en marca, modelo o serie
-      teclado = await this.tecladoRepository
+      const queryBuilder = this.tecladoRepository
         .createQueryBuilder('teclado')
         .leftJoinAndSelect('teclado.estado', 'estado')
         .leftJoinAndSelect('teclado.empleado', 'empleado')
         .leftJoinAndSelect('teclado.equipo', 'equipo')
         .leftJoinAndSelect('teclado.unidadAcademica', 'unidadAcademica')
-        .leftJoinAndSelect('teclado.departamento', 'departamento')
-        .where('teclado.marca ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('teclado.departamento', 'departamento');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('teclado.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const teclados = await queryBuilder
+        .andWhere('teclado.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('teclado.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('teclado.serie ILIKE :term', { term: `%${term}%` })
         .getMany();
-    }
 
-    if (!teclado || (Array.isArray(teclado) && teclado.length === 0)) {
-      throw new NotFoundException(
-        `No se encontró ningún teclado con el término: ${term}`,
-      );
+      if (!teclados || teclados.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún teclado con el término: ${term}`,
+        );
+      }
+      return teclados;
     }
-
-    return teclado;
   }
 
   async update(id: string, updateDto: UpdateTecladoDto) {

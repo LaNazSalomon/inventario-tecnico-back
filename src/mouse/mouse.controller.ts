@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { MouseService } from './mouse.service';
 import { CreateMouseDto } from './dto/create-mouse.dto';
 import { UpdateMouseDto } from './dto/update-mouse.dto';
 import { Auth } from 'src/users/decorators/auth.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('mouse')
 @Auth()
@@ -15,17 +26,23 @@ export class MouseController {
   }
 
   @Get()
-  findAll() {
-    return this.mouseService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.mouseService.findAll(paginationDto);
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
-    return this.mouseService.findByTerm(term);
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.mouseService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateMouseDto: UpdateMouseDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateMouseDto: UpdateMouseDto,
+  ) {
     return this.mouseService.update(id, updateMouseDto);
   }
 

@@ -1,6 +1,7 @@
 import { Roles } from '../../common/enums/role.enum';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { Puesto } from 'src/puesto/entities/puesto.entity';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 import {
   Column,
   Entity,
@@ -9,9 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
 //TODO: Poner la eliminacion en cascada en todas las partes
-
 
 @Entity('users')
 export class User {
@@ -33,7 +32,7 @@ export class User {
 
   @Column('text', {
     unique: true,
-    nullable: false
+    nullable: false,
   })
   numeroEmpleado: string;
 
@@ -46,14 +45,18 @@ export class User {
   @Column('text')
   apellidoMaterno: string;
 
-  @Column( 'text', { unique: true } )
+  @Column('text', { unique: true })
   email: string;
 
-  @ManyToOne(() => Puesto, (p) => p.empleados, { nullable: false})
+  @ManyToOne(() => Puesto, (p) => p.empleados, { nullable: false })
   @JoinColumn({ name: 'idPuesto' })
   puesto: Puesto;
 
-  @ManyToOne(() => Departamento, (d) => d.empleados, {nullable: false})
+  @ManyToOne(() => Departamento, (d) => d.empleados, { nullable: false })
   @JoinColumn({ name: 'idDepartamento' })
   departamento: Departamento;
+
+  @ManyToOne(() => UnidadAcademica, { nullable: false })
+  @JoinColumn({ name: 'idUnidadAcademica' })
+  unidadAcademica: UnidadAcademica;
 }

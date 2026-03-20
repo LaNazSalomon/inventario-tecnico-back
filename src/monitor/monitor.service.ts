@@ -10,6 +10,7 @@ import { EquiposComputo } from 'src/equipos-computo/entities/equipos-computo.ent
 import { EstadoFuncionamiento } from 'src/estado-funcionamiento/entities/estado-funcionamiento.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class MonitorService {
@@ -98,8 +99,13 @@ export class MonitorService {
     return await this.monitorRepository.save(monitor);
   }
 
-  async findAll() {
+  async findAll(paginationDto?: PaginationDto) {
+    const { idUnidadAcademica } = paginationDto || {};
+
     return await this.monitorRepository.find({
+      where: idUnidadAcademica
+        ? { unidadAcademica: { idUnidadAcademica } }
+        : {},
       relations: [
         'estado',
         'empleado',
@@ -110,12 +116,20 @@ export class MonitorService {
     });
   }
 
-  async findByTerm(term: string) {
-    let monitor: Monitor | Monitor[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<Monitor | Monitor[]> {
+    const { idUnidadAcademica } = paginationDto || {};
 
     if (isUUID(term)) {
-      monitor = await this.monitorRepository.findOne({
-        where: { idMonitor: term },
+      const monitor = await this.monitorRepository.findOne({
+        where: {
+          idMonitor: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'estado',
           'empleado',
@@ -124,27 +138,40 @@ export class MonitorService {
           'departamento',
         ],
       });
+      if (!monitor) {
+        throw new NotFoundException(
+          `No se encontró ningún monitor con el ID: ${term}`,
+        );
+      }
+      return monitor;
     } else {
-      monitor = await this.monitorRepository
+      const queryBuilder = this.monitorRepository
         .createQueryBuilder('monitor')
         .leftJoinAndSelect('monitor.estado', 'estado')
         .leftJoinAndSelect('monitor.empleado', 'empleado')
         .leftJoinAndSelect('monitor.equipo', 'equipo')
-        .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .leftJoinAndSelect('equipo.departamento', 'departamento')
-        .where('monitor.marca ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('monitor.unidadAcademica', 'unidadAcademica')
+        .leftJoinAndSelect('monitor.departamento', 'departamento');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('monitor.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const monitores = await queryBuilder
+        .andWhere('monitor.marca ILIKE :term', { term: `%${term}%` })
         .orWhere('monitor.modelo ILIKE :term', { term: `%${term}%` })
         .orWhere('monitor.serie ILIKE :term', { term: `%${term}%` })
         .getMany();
-    }
 
-    if (!monitor || (Array.isArray(monitor) && monitor.length === 0)) {
-      throw new NotFoundException(
-        `No se encontró ningún monitor con el término: ${term}`,
-      );
+      if (!monitores || monitores.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún monitor con el término: ${term}`,
+        );
+      }
+      return monitores;
     }
-
-    return monitor;
   }
 
   async update(id: string, updateDto: UpdateMonitorDto) {

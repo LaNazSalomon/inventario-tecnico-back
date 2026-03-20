@@ -114,11 +114,15 @@ export class EquiposImpresionService {
   }
 
   async findAll(paginationDto?: PaginationDto) {
-    const { limit, offset } = paginationDto || {};
+    const { limit, offset, idUnidadAcademica } = paginationDto || {};
+
+    const whereClause = idUnidadAcademica
+      ? { unidadAcademica: { idUnidadAcademica } }
+      : {};
 
     if (!limit && !offset) {
-      // Si no mandan nada, regresa todos
       return await this.equiposImpresionRepository.find({
+        where: whereClause,
         relations: [
           'estadoFuncionamiento',
           'usuario',
@@ -131,6 +135,7 @@ export class EquiposImpresionService {
     }
 
     return await this.equiposImpresionRepository.find({
+      where: whereClause,
       take: limit,
       skip: offset,
       relations: [
@@ -144,12 +149,20 @@ export class EquiposImpresionService {
     });
   }
 
-  async findByTerm(term: string) {
-    let equipo: EquipoImpresion | EquipoImpresion[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<EquipoImpresion | EquipoImpresion[]> {
+    const { idUnidadAcademica } = paginationDto || {};
 
     if (isUUID(term)) {
-      equipo = await this.equiposImpresionRepository.findOne({
-        where: { idEquipoImpresion: term },
+      const equipo = await this.equiposImpresionRepository.findOne({
+        where: {
+          idEquipoImpresion: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'estadoFuncionamiento',
           'usuario',
@@ -159,30 +172,49 @@ export class EquiposImpresionService {
           'departamentoArea',
         ],
       });
+      if (!equipo) {
+        throw new NotFoundException(
+          `No se encontró ningún equipo de impresión con el ID: ${term}`,
+        );
+      }
+      return equipo;
     } else {
-      equipo = await this.equiposImpresionRepository
+      const queryBuilder = this.equiposImpresionRepository
         .createQueryBuilder('equipo')
-        .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estadoFuncionamiento')
+        .leftJoinAndSelect(
+          'equipo.estadoFuncionamiento',
+          'estadoFuncionamiento',
+        )
         .leftJoinAndSelect('equipo.usuario', 'usuario')
-        .leftJoinAndSelect('equipo.marcaEquipoImpresion', 'marcaEquipoImpresion')
+        .leftJoinAndSelect(
+          'equipo.marcaEquipoImpresion',
+          'marcaEquipoImpresion',
+        )
         .leftJoinAndSelect(
           'equipo.modeloEquipoImpresion',
           'modeloEquipoImpresion',
         )
         .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
-        .where('equipo.inventario ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('equipo.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const equipos = await queryBuilder
+        .andWhere('equipo.inventario ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
         .getMany();
-    }
 
-    if (!equipo || (Array.isArray(equipo) && equipo.length === 0)) {
-      throw new NotFoundException(
-        `No se encontró ningún equipo de impresión con el término: ${term}`,
-      );
+      if (!equipos || equipos.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún equipo de impresión con el término: ${term}`,
+        );
+      }
+      return equipos;
     }
-
-    return equipo;
   }
 
   async update(id: string, updateDto: UpdateEquiposImpresionDto) {

@@ -40,23 +40,53 @@ export class EquipoProyeccionService {
 
   async create(createDto: CreateEquipoProyeccionDto) {
     // Validar relaciones
-    const estado = await this.estadoRepository.findOneBy({ id: createDto.estadoFuncionamientoId });
-    if (!estado) throw new NotFoundException(`Estado con ID ${createDto.estadoFuncionamientoId} no encontrado`);
+    const estado = await this.estadoRepository.findOneBy({
+      id: createDto.estadoFuncionamientoId,
+    });
+    if (!estado)
+      throw new NotFoundException(
+        `Estado con ID ${createDto.estadoFuncionamientoId} no encontrado`,
+      );
 
-    const usuario = await this.userRepository.findOneBy({ idEmpleado: createDto.usuarioId });
-    if (!usuario) throw new NotFoundException(`Usuario con ID ${createDto.usuarioId} no encontrado`);
+    const usuario = await this.userRepository.findOneBy({
+      idEmpleado: createDto.usuarioId,
+    });
+    if (!usuario)
+      throw new NotFoundException(
+        `Usuario con ID ${createDto.usuarioId} no encontrado`,
+      );
 
-    const marca = await this.marcaRepository.findOneBy({ id: createDto.marcaEquipoProyeccionId });
-    if (!marca) throw new NotFoundException(`Marca con ID ${createDto.marcaEquipoProyeccionId} no encontrada`);
+    const marca = await this.marcaRepository.findOneBy({
+      id: createDto.marcaEquipoProyeccionId,
+    });
+    if (!marca)
+      throw new NotFoundException(
+        `Marca con ID ${createDto.marcaEquipoProyeccionId} no encontrada`,
+      );
 
-    const modelo = await this.modeloRepository.findOneBy({ id: createDto.modeloEquipoProyeccionId });
-    if (!modelo) throw new NotFoundException(`Modelo con ID ${createDto.modeloEquipoProyeccionId} no encontrado`);
+    const modelo = await this.modeloRepository.findOneBy({
+      id: createDto.modeloEquipoProyeccionId,
+    });
+    if (!modelo)
+      throw new NotFoundException(
+        `Modelo con ID ${createDto.modeloEquipoProyeccionId} no encontrado`,
+      );
 
-    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({ idUnidadAcademica: createDto.unidadAcademicaId });
-    if (!unidadAcademica) throw new NotFoundException(`Unidad académica con ID ${createDto.unidadAcademicaId} no encontrada`);
+    const unidadAcademica = await this.unidadAcademicaRepository.findOneBy({
+      idUnidadAcademica: createDto.unidadAcademicaId,
+    });
+    if (!unidadAcademica)
+      throw new NotFoundException(
+        `Unidad académica con ID ${createDto.unidadAcademicaId} no encontrada`,
+      );
 
-    const departamento = await this.departamentoRepository.findOneBy({ idDepartamento: createDto.departamentoAreaId });
-    if (!departamento) throw new NotFoundException(`Departamento con ID ${createDto.departamentoAreaId} no encontrado`);
+    const departamento = await this.departamentoRepository.findOneBy({
+      idDepartamento: createDto.departamentoAreaId,
+    });
+    if (!departamento)
+      throw new NotFoundException(
+        `Departamento con ID ${createDto.departamentoAreaId} no encontrado`,
+      );
 
     // Crear equipo de proyección
     const equipo = this.equiposProyeccionRepository.create({
@@ -87,10 +117,15 @@ export class EquipoProyeccionService {
   }
 
   async findAll(paginationDto?: PaginationDto) {
-    const { limit, offset } = paginationDto || {};
+    const { limit, offset, idUnidadAcademica } = paginationDto || {};
+
+    const whereClause = idUnidadAcademica
+      ? { unidadAcademica: { idUnidadAcademica } }
+      : {};
 
     if (!limit && !offset) {
       return await this.equiposProyeccionRepository.find({
+        where: whereClause,
         relations: [
           'estadoFuncionamiento',
           'usuario',
@@ -103,6 +138,7 @@ export class EquipoProyeccionService {
     }
 
     return await this.equiposProyeccionRepository.find({
+      where: whereClause,
       take: limit,
       skip: offset,
       relations: [
@@ -116,12 +152,20 @@ export class EquipoProyeccionService {
     });
   }
 
-  async findByTerm(term: string) {
-    let equipo: EquipoProyeccion | EquipoProyeccion[] | null;
+  async findByTerm(
+    term: string,
+    paginationDto?: PaginationDto,
+  ): Promise<EquipoProyeccion | EquipoProyeccion[]> {
+    const { idUnidadAcademica } = paginationDto || {};
 
     if (isUUID(term)) {
-      equipo = await this.equiposProyeccionRepository.findOne({
-        where: { idEquipoProyeccion: term },
+      const equipo = await this.equiposProyeccionRepository.findOne({
+        where: {
+          idEquipoProyeccion: term,
+          ...(idUnidadAcademica
+            ? { unidadAcademica: { idUnidadAcademica } }
+            : {}),
+        },
         relations: [
           'estadoFuncionamiento',
           'usuario',
@@ -131,26 +175,50 @@ export class EquipoProyeccionService {
           'departamentoArea',
         ],
       });
+      if (!equipo) {
+        throw new NotFoundException(
+          `No se encontró ningún equipo de proyección con el ID: ${term}`,
+        );
+      }
+      return equipo;
     } else {
-      equipo = await this.equiposProyeccionRepository
+      const queryBuilder = this.equiposProyeccionRepository
         .createQueryBuilder('equipo')
-        .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estadoFuncionamiento')
+        .leftJoinAndSelect(
+          'equipo.estadoFuncionamiento',
+          'estadoFuncionamiento',
+        )
         .leftJoinAndSelect('equipo.usuario', 'usuario')
-        .leftJoinAndSelect('equipo.marcaEquipoProyeccion', 'marcaEquipoProyeccion')
-        .leftJoinAndSelect('equipo.modeloEquipoProyeccion', 'modeloEquipoProyeccion')
+        .leftJoinAndSelect(
+          'equipo.marcaEquipoProyeccion',
+          'marcaEquipoProyeccion',
+        )
+        .leftJoinAndSelect(
+          'equipo.modeloEquipoProyeccion',
+          'modeloEquipoProyeccion',
+        )
         .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea')
-        .where('equipo.inventario ILIKE :term', { term: `%${term}%` })
+        .leftJoinAndSelect('equipo.departamentoArea', 'departamentoArea');
+
+      if (idUnidadAcademica) {
+        queryBuilder.where('equipo.unidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        });
+      }
+
+      const equipos = await queryBuilder
+        .andWhere('equipo.inventario ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
         .orWhere('equipo.resolucion ILIKE :term', { term: `%${term}%` })
         .getMany();
-    }
 
-    if (!equipo || (Array.isArray(equipo) && equipo.length === 0)) {
-      throw new NotFoundException(`No se encontró ningún equipo de proyección con el término: ${term}`);
+      if (!equipos || equipos.length === 0) {
+        throw new NotFoundException(
+          `No se encontró ningún equipo de proyección con el término: ${term}`,
+        );
+      }
+      return equipos;
     }
-
-    return equipo;
   }
 
   async update(id: string, updateDto: UpdateEquipoProyeccionDto) {
@@ -159,15 +227,21 @@ export class EquipoProyeccionService {
       ...updateDto,
     });
     if (!equipo) {
-      throw new NotFoundException(`Equipo de proyección con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Equipo de proyección con ID ${id} no encontrado`,
+      );
     }
     return await this.equiposProyeccionRepository.save(equipo);
   }
 
   async remove(id: string) {
-    const equipo = await this.equiposProyeccionRepository.findOneBy({ idEquipoProyeccion: id });
+    const equipo = await this.equiposProyeccionRepository.findOneBy({
+      idEquipoProyeccion: id,
+    });
     if (!equipo) {
-      throw new NotFoundException(`Equipo de proyección con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Equipo de proyección con ID ${id} no encontrado`,
+      );
     }
     return await this.equiposProyeccionRepository.remove(equipo);
   }

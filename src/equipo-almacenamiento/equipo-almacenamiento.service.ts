@@ -12,6 +12,7 @@ import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
+import { Brackets } from 'typeorm';
 
 @Injectable()
 export class EquipoAlmacenamientoService {
@@ -122,6 +123,7 @@ export class EquipoAlmacenamientoService {
       ],
     });
   }
+
   async findByTerm(term: string, pagination: PaginationDto) {
     const { idUnidadAcademica } = pagination;
 
@@ -129,7 +131,7 @@ export class EquipoAlmacenamientoService {
       const equipo = await this.equiposRepository.findOne({
         where: {
           idEquipoAlmacenamiento: term,
-          ...(idUnidadAcademica && { unidadAcademica: { idUnidadAcademica } }),
+          unidadAcademica: { idUnidadAcademica }, // siempre obligatorio
         },
         relations: [
           'usuario',
@@ -143,7 +145,7 @@ export class EquipoAlmacenamientoService {
 
       if (!equipo) {
         throw new NotFoundException(
-          `No se encontró ningún equipo de almacenamiento con el ID: ${term}`,
+          `No se encontró ningún equipo de almacenamiento con el ID: ${term} en la unidad académica ${idUnidadAcademica}`,
         );
       }
       return equipo;
@@ -156,28 +158,26 @@ export class EquipoAlmacenamientoService {
         .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estado')
         .leftJoinAndSelect('equipo.departamento', 'departamento')
         .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .where('equipo.inventario ILIKE :term', { term: `%${term}%` })
-        .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
-        .orWhere('equipo.capacidadAlmacenamiento ILIKE :term', {
-          term: `%${term}%`,
+        .where('unidadAcademica.idUnidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
         })
-        .orWhere('marca.nombre ILIKE :term', { term: `%${term}%` })
-        .orWhere('modelo.nombre ILIKE :term', { term: `%${term}%` });
-
-      if (idUnidadAcademica) {
-        query.andWhere(
-          'unidadAcademica.idUnidadAcademica = :idUnidadAcademica',
-          {
-            idUnidadAcademica,
-          },
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('equipo.inventario ILIKE :term', { term: `%${term}%` })
+              .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
+              .orWhere('equipo.capacidadAlmacenamiento ILIKE :term', {
+                term: `%${term}%`,
+              })
+              .orWhere('marca.nombre ILIKE :term', { term: `%${term}%` })
+              .orWhere('modelo.nombre ILIKE :term', { term: `%${term}%` });
+          }),
         );
-      }
 
       const equipos = await query.getMany();
 
       if (!equipos || equipos.length === 0) {
         throw new NotFoundException(
-          `No se encontró ningún equipo de almacenamiento con el término: ${term}`,
+          `No se encontró ningún equipo de almacenamiento con el término: ${term} en la unidad académica ${idUnidadAcademica}`,
         );
       }
 

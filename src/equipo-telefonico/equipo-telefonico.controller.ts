@@ -32,9 +32,11 @@ export class EquipoTelefonicoController {
   }
 
   @Get(':term')
-  findByTerm(@Param('term') term: string) {
-    // Aquí aceptamos tanto UUID como búsquedas avanzadas
-    return this.equiposTelefonicosService.findByTerm(term);
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.equiposTelefonicosService.findByTerm(term, paginationDto);
   }
 
   @Patch(':id')

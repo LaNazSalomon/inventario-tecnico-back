@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets } from 'typeorm';
 import { Repository } from 'typeorm';
 import { EquipoEnergia } from './entities/equipo-energia.entity';
 import { CreateEquipoEnergiaDto } from './dto/create-equipo-energia.dto';
@@ -103,15 +104,18 @@ export class EquipoEnergiaService {
   }
 
   async findAll(paginationDto?: PaginationDto) {
-    const { limit, offset } = paginationDto || {};
+    const { idUnidadAcademica } = paginationDto || {};
 
     return await this.equiposRepository.find({
-      take: limit,
-      skip: offset,
+      where: idUnidadAcademica
+        ? {
+            unidadAcademica: { idUnidadAcademica },
+          }
+        : {},
       relations: [
         'usuario',
         'marcaEquipoEnergia',
-        'modeloEquipoEnergia',
+        'modeloEquipoEnergia',  
         'estadoFuncionamiento',
         'departamento',
         'unidadAcademica',
@@ -119,10 +123,15 @@ export class EquipoEnergiaService {
     });
   }
 
-  async findByTerm(term: string) {
+  async findByTerm(term: string, paginationDto: PaginationDto) {
+    const { idUnidadAcademica } = paginationDto;
+
     if (isUUID(term)) {
       const equipo = await this.equiposRepository.findOne({
-        where: { idEquipoEnergia: term },
+        where: {
+          idEquipoEnergia: term,
+          unidadAcademica: { idUnidadAcademica }, // siempre obligatorio
+        },
         relations: [
           'usuario',
           'marcaEquipoEnergia',
@@ -135,13 +144,12 @@ export class EquipoEnergiaService {
 
       if (!equipo) {
         throw new NotFoundException(
-          `No se encontró ningún equipo de energía con el ID: ${term}`,
+          `No se encontró ningún equipo de energía con el ID: ${term} en la unidad académica ${idUnidadAcademica}`,
         );
       }
-
       return equipo;
     } else {
-      const equipos = await this.equiposRepository
+      const query = this.equiposRepository
         .createQueryBuilder('equipo')
         .leftJoinAndSelect('equipo.usuario', 'usuario')
         .leftJoinAndSelect('equipo.marcaEquipoEnergia', 'marca')
@@ -149,15 +157,24 @@ export class EquipoEnergiaService {
         .leftJoinAndSelect('equipo.estadoFuncionamiento', 'estado')
         .leftJoinAndSelect('equipo.departamento', 'departamento')
         .leftJoinAndSelect('equipo.unidadAcademica', 'unidadAcademica')
-        .where('equipo.inventario ILIKE :term', { term: `%${term}%` })
-        .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
-        .orWhere('marca.nombre ILIKE :term', { term: `%${term}%` })
-        .orWhere('modelo.nombre ILIKE :term', { term: `%${term}%` })
-        .getMany();
+        .where('unidadAcademica.idUnidadAcademica = :idUnidadAcademica', {
+          idUnidadAcademica,
+        })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('equipo.inventario ILIKE :term', { term: `%${term}%` })
+              .orWhere('equipo.serie ILIKE :term', { term: `%${term}%` })
+              .orWhere('marca.nombre ILIKE :term', { term: `%${term}%` })
+              .orWhere('modelo.nombre ILIKE :term', { term: `%${term}%` })
+              ;
+          }),
+        );
+
+      const equipos = await query.getMany();
 
       if (!equipos || equipos.length === 0) {
         throw new NotFoundException(
-          `No se encontró ningún equipo de energía con el término: ${term}`,
+          `No se encontró ningún equipo de energía con el término: ${term} en la unidad académica ${idUnidadAcademica}`,
         );
       }
 

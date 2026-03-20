@@ -23,6 +23,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class UsersService {
@@ -99,6 +100,7 @@ export class UsersService {
     }
   }
 
+  //TODO: Poner la unidad academica aqui para poder trabajar
   async findAll(paginationDto: PaginationDto) {
     const { limit = 50, offset = 0 } = paginationDto;
 
@@ -113,7 +115,7 @@ export class UsersService {
     if (isUUID(term)) {
       users = await this.userRepository.findOne({
         where: { idEmpleado: term },
-        relations: ['puesto', 'departamento'],
+        relations: ['puesto', 'departamento', 'unidadAcademica'],
       });
     } else {
       const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -121,6 +123,7 @@ export class UsersService {
       users = await queryBuilder
         .leftJoinAndSelect('user.puesto', 'puesto')
         .leftJoinAndSelect('user.departamento', 'departamento')
+        .leftJoinAndSelect('user.unidadAcademica', 'unidadAcademica')
         .where(
           `(
         CAST(user.numeroEmpleado AS TEXT) ILIKE :term OR
@@ -238,6 +241,7 @@ export class UsersService {
         password: true,
         rol: true,
       },
+      relations: ['unidadAcademica']
     });
 
     if (!userInDB) {
@@ -256,6 +260,7 @@ export class UsersService {
       numeroEmpleado: userInDB.numeroEmpleado,
       idEmpleado: userInDB.idEmpleado,
       nombre: nombreCompleto,
+      unidadAcademica: userInDB.unidadAcademica.idUnidadAcademica,
       rol: userInDB.rol,
       token: this.getJwtToken({ id: userInDB.idEmpleado }),
     };

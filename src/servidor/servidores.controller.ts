@@ -35,6 +35,14 @@ export class ServidorController {
     return this.servidorService.findById(id);
   }
 
+  @Get('search/:term')
+  findByTerm(
+    @Param('term') term: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.servidorService.findByTerm(term, paginationDto);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

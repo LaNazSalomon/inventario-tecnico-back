@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { EquiposComputoService } from './equipos-computo.service';
 import { CreateEquiposComputoDto } from './dto/create-equipos-computo.dto';
 import { UpdateEquiposComputoDto } from './dto/update-equipos-computo.dto';
@@ -16,17 +26,23 @@ export class EquiposComputoController {
   }
 
   @Get()
-  findAll( @Query() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.equiposComputoService.findAll(paginationDto);
   }
 
   @Get(':id')
-  findByTerm(@Param('id', ParseUUIDPipe) id: string) {
-    return this.equiposComputoService.findByTerm(id);
+  findByTerm(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.equiposComputoService.findByTerm(id, paginationDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEquiposComputoDto: UpdateEquiposComputoDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEquiposComputoDto: UpdateEquiposComputoDto,
+  ) {
     return this.equiposComputoService.update(id, updateEquiposComputoDto);
   }
 
