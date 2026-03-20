@@ -1,7 +1,14 @@
-import { IsIn, IsInt, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class LoginDto {
-  @IsInt({ message: 'Se esperaba que el numero de usuario fuera un numero' })
+  @IsString({ message: 'Se esperaba que el numero de usuario fuera un string' })
+  @IsNotEmpty({ message: 'El numero de empleado es requerido' })
   numeroEmpleado: string;
 
   @IsString({ message: 'Se esperaba que la contraseña fuera string' })

@@ -66,6 +66,20 @@ export class UsersService {
         throw new BadRequestException('No se pudo encontrar el puesto');
       }
 
+      //Buscar la unidad académica
+      const unidadAcademica = await this.userRepository.manager.findOne(
+        UnidadAcademica,
+        {
+          where: { idUnidadAcademica: createUserDto.idUnidadAcademica },
+        },
+      );
+
+      if (!unidadAcademica) {
+        throw new BadRequestException(
+          `Unidad académica con ID ${createUserDto.idUnidadAcademica} no encontrada`,
+        );
+      }
+
       //Creacion del correo
       const correo: CreateEmailDto = {
         to: createUserDto.email,
@@ -87,6 +101,7 @@ export class UsersService {
         ...createUserDto,
         puesto,
         departamento,
+        unidadAcademica,
         password: passwordEncript,
       };
 
@@ -241,7 +256,7 @@ export class UsersService {
         password: true,
         rol: true,
       },
-      relations: ['unidadAcademica']
+      relations: ['unidadAcademica'],
     });
 
     if (!userInDB) {
