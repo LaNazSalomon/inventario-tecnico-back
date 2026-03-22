@@ -286,4 +286,62 @@ export class UsersService {
     const token = this.jwtService.sign(payolad);
     return token;
   }
+
+  //-------------------------Resetear contraseña-------------------------
+  async resetPassword(
+    usuarioId: string,
+    generarAutomatica: boolean,
+    contrasenaManual?: string,
+  ) {
+    const usuario = await this.userRepository.findOne({
+      where: { idEmpleado: usuarioId },
+      relations: ['puesto', 'departamento', 'unidadAcademica'],
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${usuarioId} no encontrado`);
+    }
+
+    let nuevaContrasena: string;
+
+    if (generarAutomatica) {
+      const longitudPassword = 12;
+      nuevaContrasena =
+        RandomPassword.generarContrasenaAleatoria(longitudPassword);
+    } else {
+      if (!contrasenaManual) {
+        throw new BadRequestException(
+          'Debe proporcionar una contraseña manual',
+        );
+      }
+      nuevaContrasena = contrasenaManual;
+    }
+
+    const passwordEncriptado = RandomPassword.Encriptar(nuevaContrasena);
+    usuario.password = passwordEncriptado;
+    await this.userRepository.save(usuario);
+
+    const nombreCompleto = `${usuario.nombreEmpleado} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`;
+
+    const correo: CreateEmailDto = {
+      to: usuario.email,
+      subject: CONSTANTES.TITULO_PASSWORD,
+      text: `Su contraseña ha sido reseteada.
+      Número de empleado: ${usuario.numeroEmpleado}
+      Nueva contraseña: ${nuevaContrasena}`,
+      html: MensajePassword.CorreoDatosHTML(
+        nombreCompleto,
+        usuario.numeroEmpleado,
+        nuevaContrasena,
+      ),
+    };
+
+    this.emailsServices.sendMail(correo);
+
+    return {
+      mensaje: 'Contraseña reseteada exitosamente',
+      usuario: usuario.numeroEmpleado,
+      nombre: nombreCompleto,
+    };
+  }
 }

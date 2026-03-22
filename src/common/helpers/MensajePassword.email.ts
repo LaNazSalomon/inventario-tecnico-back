@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MensajePassword {
-  static CorreoDatosHTML(nombre: string, numeroEmpleado: string, contrasena: string): string {
+  static CorreoDatosHTML(
+    nombre: string,
+    numeroEmpleado: string,
+    contrasena: string,
+  ): string {
     const message: string = `<!DOCTYPE html>
 <html>
   <head>
