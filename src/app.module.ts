@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from './common/logger/logger.module';
 import { UsersModule } from './users/users.module';
 import { PuestoModule } from './puesto/puesto.module';
 import { DepartamentoModule } from './departamento/departamento.module';
@@ -29,6 +30,7 @@ import { UtilsReportsModule } from './utils-reports/utils-reports.module';
 
 @Module({
   imports: [
+    LoggerModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
       ssl: process.env.STAGE === 'prod' ? true : false,
