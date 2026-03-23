@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from 'src/users/dto/login.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Auth } from './decorators/auth.decorator';
 import { Roles } from 'src/common/enums/role.enum';
@@ -21,9 +22,8 @@ import { Roles } from 'src/common/enums/role.enum';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-
   @Post()
-  @Auth( Roles.Admin )
+  @Auth(Roles.Admin)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -35,13 +35,13 @@ export class UsersController {
   }
 
   @Get(':term')
-  @Auth( Roles.Admin )
+  @Auth(Roles.Admin)
   findByTerm(@Param('term') term: string) {
     return this.usersService.findByTerm(term);
   }
 
   @Patch(':id')
-  @Auth( Roles.Admin )
+  @Auth(Roles.Admin)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -50,7 +50,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Auth( Roles.Admin )
+  @Auth(Roles.Admin)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
@@ -59,5 +59,16 @@ export class UsersController {
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.usersService.login(loginDto);
+  }
+
+  //Resetear contraseña
+  @Post('reset-password')
+  @Auth(Roles.Admin)
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.usersService.resetPassword(
+      resetPasswordDto.usuarioId,
+      resetPasswordDto.generarAutomatica,
+      resetPasswordDto.contrasenaManual,
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from './common/logger/logger.module';
 import { UsersModule } from './users/users.module';
 import { PuestoModule } from './puesto/puesto.module';
 import { DepartamentoModule } from './departamento/departamento.module';
@@ -19,9 +20,17 @@ import { TecladoModule } from './teclado/teclado.module';
 import { MouseModule } from './mouse/mouse.module';
 import { MonitorModule } from './monitor/monitor.module';
 import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funcionamiento.module';
+import { ServidoresModule } from './servidor/servidores.module';
+import { EquiposImpresionModule } from './equipos-impresion/equipos-impresion.module';
+import { EquipoProyeccionModule } from './equipo-proyeccion/equipo-proyeccion.module';
+import { EquipoAlmacenamientoModule } from './equipo-almacenamiento/equipo-almacenamiento.module';
+import { EquipoEnergiaModule } from './equipo-energia/equipo-energia.module';
+import { EquipoTelefonicoModule } from './equipo-telefonico/equipo-telefonico.module';
+import { UtilsReportsModule } from './utils-reports/utils-reports.module';
 
 @Module({
   imports: [
+    LoggerModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
       ssl: process.env.STAGE === 'prod' ? true : false,
@@ -64,6 +73,13 @@ import { EstadoFuncionamientoModule } from './estado-funcionamiento/estado-funci
     MouseModule,
     MonitorModule,
     EstadoFuncionamientoModule,
+    ServidoresModule,
+    EquiposImpresionModule,
+    EquipoProyeccionModule,
+    EquipoAlmacenamientoModule,
+    EquipoEnergiaModule,
+    EquipoTelefonicoModule,
+    UtilsReportsModule,
   ],
   controllers: [],
   providers: [],

@@ -14,6 +14,9 @@ import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.mod
 import { UsersModule } from 'src/users/users.module';
 import { DepartamentoModule } from 'src/departamento/departamento.module';
 import { EstadoFuncionamientoModule } from 'src/estado-funcionamiento/estado-funcionamiento.module';
+import { ReportesComputoController } from './reports/reportes-computo.controller';
+import { ReportesComputoService } from './reports/reportes-computo.service';
+import { UtilsReportsModule } from 'src/utils-reports/utils-reports.module';
 
 @Module({
   imports: [
@@ -29,10 +32,11 @@ import { EstadoFuncionamientoModule } from 'src/estado-funcionamiento/estado-fun
     EstadoFuncionamientoModule,
     UsersModule,
     DepartamentoModule,
+    UtilsReportsModule,
     TypeOrmModule.forFeature([EquiposComputo]),
   ],
-  controllers: [EquiposComputoController],
-  providers: [EquiposComputoService],
+  controllers: [EquiposComputoController, ReportesComputoController],
+  providers: [EquiposComputoService, ReportesComputoService],
   exports: [TypeOrmModule],
 })
 export class EquiposComputoModule {}

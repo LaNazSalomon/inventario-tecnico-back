@@ -1,0 +1,1 @@
+export const dateGetTime = new Date().getTime();

@@ -1,9 +1,15 @@
-import { IsInt, IsString, IsDateString, IsUUID, IsNotEmpty } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsDateString,
+  IsUUID,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CreateMouseDto {
   @IsInt({ message: 'El número de inventario debe ser un número entero' })
   @IsNotEmpty({ message: 'El número de inventario no puede estar vacío' })
-  numeroInventario: number;
+  numeroInventario: string;
 
   @IsString({ message: 'La marca debe ser texto' })
   @IsNotEmpty({ message: 'La marca no puede estar vacía' })
@@ -25,8 +31,15 @@ export class CreateMouseDto {
   @IsNotEmpty({ message: 'La serie no puede estar vacía' })
   serie: string;
 
-  @IsDateString({}, { message: 'La fecha de vencimiento de garantía debe ser una fecha válida' })
-  @IsNotEmpty({ message: 'La fecha de vencimiento de garantía no puede estar vacía' })
+  @IsDateString(
+    {},
+    {
+      message: 'La fecha de vencimiento de garantía debe ser una fecha válida',
+    },
+  )
+  @IsNotEmpty({
+    message: 'La fecha de vencimiento de garantía no puede estar vacía',
+  })
   fechaVencimientoGarantia: Date;
 
   @IsUUID('4', { message: 'El estado debe ser un UUID válido' })
@@ -40,4 +53,10 @@ export class CreateMouseDto {
   @IsUUID('4', { message: 'El equipo debe ser un UUID válido' })
   @IsNotEmpty({ message: 'El equipo es obligatorio' })
   idEquipo: string;
+
+  @IsUUID('4', { message: 'El departamento debe ser un UUID válido.' })
+  idDepartamento: string;
+
+  @IsUUID('4', { message: 'La unidad académica debe ser un UUID válido.' })
+  idUnidadAcademica: string;
 }

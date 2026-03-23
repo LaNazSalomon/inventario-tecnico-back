@@ -1,0 +1,15 @@
+export const columnasMouse = [
+  'id',
+  'numeroInventario',
+  'marca',
+  'modelo',
+  'tipoConector',
+  'mecanismo',
+  'serie',
+  'fechaVencimientoGarantia',
+  'estado_funcionamiento',
+  'nombreEmpleado',
+  'equipo_asignado',
+  'departamento',
+  'unidad_academica',
+];

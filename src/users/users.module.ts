@@ -9,6 +9,7 @@ import { EmailsModule } from 'src/emails/emails.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UnidadAcademicaModule } from 'src/unidad-academica/unidad-academica.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     forwardRef(() => DepartamentoModule),
     PuestoModule,
     EmailsModule,
+    UnidadAcademicaModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [  ],

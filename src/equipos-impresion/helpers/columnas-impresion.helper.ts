@@ -1,0 +1,15 @@
+export const columnasImpresion = [
+  'id',
+  'inventario',
+  'compartida',
+  'multifuncional',
+  'serie',
+  'nombreEmpleado',
+  'estado_funcionamiento',
+  'marca',
+  'modelo',
+  'unidad_academica',
+  'departamento',
+  'tipo_equipo_impresion',
+  'modo_color_impresion',
+];

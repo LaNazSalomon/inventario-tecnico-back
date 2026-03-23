@@ -1,9 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggingInterceptor } from './common/logger/logging.interceptor';
+import { AllExceptionsFilter } from './common/logger/exception.filter';
+import { AppLogger } from './common/logger/app-logger.service';
 
 async function main() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
 
   app.setGlobalPrefix('api/auth');
 
@@ -13,6 +18,9 @@ async function main() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(AppLogger)));
+  app.useGlobalInterceptors(new LoggingInterceptor(app.get(AppLogger)));
 
   app.enableCors({
     origin: process.env.URL_FRONT,

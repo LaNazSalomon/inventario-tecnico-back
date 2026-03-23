@@ -23,6 +23,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
+import { UnidadAcademica } from 'src/unidad-academica/entities/unidad-academica.entity';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +66,20 @@ export class UsersService {
         throw new BadRequestException('No se pudo encontrar el puesto');
       }
 
+      //Buscar la unidad académica
+      const unidadAcademica = await this.userRepository.manager.findOne(
+        UnidadAcademica,
+        {
+          where: { idUnidadAcademica: createUserDto.idUnidadAcademica },
+        },
+      );
+
+      if (!unidadAcademica) {
+        throw new BadRequestException(
+          `Unidad académica con ID ${createUserDto.idUnidadAcademica} no encontrada`,
+        );
+      }
+
       //Creacion del correo
       const correo: CreateEmailDto = {
         to: createUserDto.email,
@@ -86,6 +101,7 @@ export class UsersService {
         ...createUserDto,
         puesto,
         departamento,
+        unidadAcademica,
         password: passwordEncript,
       };
 
@@ -99,6 +115,7 @@ export class UsersService {
     }
   }
 
+  //TODO: Poner la unidad academica aqui para poder trabajar
   async findAll(paginationDto: PaginationDto) {
     const { limit = 50, offset = 0 } = paginationDto;
 
@@ -113,7 +130,7 @@ export class UsersService {
     if (isUUID(term)) {
       users = await this.userRepository.findOne({
         where: { idEmpleado: term },
-        relations: ['puesto', 'departamento'],
+        relations: ['puesto', 'departamento', 'unidadAcademica'],
       });
     } else {
       const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -121,6 +138,7 @@ export class UsersService {
       users = await queryBuilder
         .leftJoinAndSelect('user.puesto', 'puesto')
         .leftJoinAndSelect('user.departamento', 'departamento')
+        .leftJoinAndSelect('user.unidadAcademica', 'unidadAcademica')
         .where(
           `(
         CAST(user.numeroEmpleado AS TEXT) ILIKE :term OR
@@ -238,6 +256,7 @@ export class UsersService {
         password: true,
         rol: true,
       },
+      relations: ['unidadAcademica'],
     });
 
     if (!userInDB) {
@@ -256,6 +275,7 @@ export class UsersService {
       numeroEmpleado: userInDB.numeroEmpleado,
       idEmpleado: userInDB.idEmpleado,
       nombre: nombreCompleto,
+      unidadAcademica: userInDB.unidadAcademica.idUnidadAcademica,
       rol: userInDB.rol,
       token: this.getJwtToken({ id: userInDB.idEmpleado }),
     };
@@ -265,5 +285,63 @@ export class UsersService {
   private getJwtToken(payolad: JwtPayload) {
     const token = this.jwtService.sign(payolad);
     return token;
+  }
+
+  //-------------------------Resetear contraseña-------------------------
+  async resetPassword(
+    usuarioId: string,
+    generarAutomatica: boolean,
+    contrasenaManual?: string,
+  ) {
+    const usuario = await this.userRepository.findOne({
+      where: { idEmpleado: usuarioId },
+      relations: ['puesto', 'departamento', 'unidadAcademica'],
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${usuarioId} no encontrado`);
+    }
+
+    let nuevaContrasena: string;
+
+    if (generarAutomatica) {
+      const longitudPassword = 12;
+      nuevaContrasena =
+        RandomPassword.generarContrasenaAleatoria(longitudPassword);
+    } else {
+      if (!contrasenaManual) {
+        throw new BadRequestException(
+          'Debe proporcionar una contraseña manual',
+        );
+      }
+      nuevaContrasena = contrasenaManual;
+    }
+
+    const passwordEncriptado = RandomPassword.Encriptar(nuevaContrasena);
+    usuario.password = passwordEncriptado;
+    await this.userRepository.save(usuario);
+
+    const nombreCompleto = `${usuario.nombreEmpleado} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`;
+
+    const correo: CreateEmailDto = {
+      to: usuario.email,
+      subject: CONSTANTES.TITULO_PASSWORD,
+      text: `Su contraseña ha sido reseteada.
+      Número de empleado: ${usuario.numeroEmpleado}
+      Nueva contraseña: ${nuevaContrasena}`,
+      html: MensajePassword.CorreoDatosHTML(
+        nombreCompleto,
+        usuario.numeroEmpleado,
+        nuevaContrasena,
+      ),
+    };
+
+    this.emailsServices.sendMail(correo);
+
+    return {
+      mensaje: 'Contraseña reseteada exitosamente',
+      usuario: usuario.numeroEmpleado,
+      nombre: nombreCompleto,
+    };
   }
 }
